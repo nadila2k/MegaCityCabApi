@@ -1,6 +1,7 @@
-package com.nadila.MegaCityCab.config.security;
+package com.nadila.MegaCityCab.config;
 
-import com.nadila.MegaCityCab.config.security.jwt.AuthTokenFilter;
+import com.cloudinary.Cloudinary;
+import com.nadila.MegaCityCab.config.jwt.AuthTokenFilter;
 import com.nadila.MegaCityCab.service.AuthService.CabUserDetailesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -27,6 +31,14 @@ public class CityCabConfig {
     private final CabUserDetailesService userDetailesService;
 
 
+    @Bean
+    public Cloudinary cloudinary(){
+        Map<String, String> config = new HashMap<>();
+        config.put("cloud_name", "dbiddrued");
+        config.put("api_key", "367988313781747");
+        config.put("api_secret", "c30rn4ORcvPGW_U5BsnTKChzeMc");
+        return new Cloudinary(config);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

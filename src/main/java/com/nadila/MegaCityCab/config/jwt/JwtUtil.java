@@ -1,4 +1,4 @@
-package com.nadila.MegaCityCab.config.security.jwt;
+package com.nadila.MegaCityCab.config.jwt;
 
 import com.nadila.MegaCityCab.enums.Roles;
 import com.nadila.MegaCityCab.service.AuthService.CabUserDetailes;

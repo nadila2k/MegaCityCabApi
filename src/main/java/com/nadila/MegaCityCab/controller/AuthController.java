@@ -1,6 +1,6 @@
 package com.nadila.MegaCityCab.controller;
 
-import com.nadila.MegaCityCab.config.security.jwt.JwtUtil;
+import com.nadila.MegaCityCab.config.jwt.JwtUtil;
 import com.nadila.MegaCityCab.requests.LoginRequest;
 import com.nadila.MegaCityCab.response.ApiResponse;
 import com.nadila.MegaCityCab.response.JwtResponse;
