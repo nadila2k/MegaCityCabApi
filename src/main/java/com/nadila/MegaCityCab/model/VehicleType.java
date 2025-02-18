@@ -1,5 +1,6 @@
 package com.nadila.MegaCityCab.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,7 @@ public class VehicleType {
     private String name;
     private BigDecimal price;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicleType")
     private List<Drivers> drivers;
 }

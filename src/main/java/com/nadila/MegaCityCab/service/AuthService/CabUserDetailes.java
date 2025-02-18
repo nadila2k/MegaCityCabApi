@@ -18,8 +18,6 @@ public class CabUserDetailes implements UserDetails {
 
     private  CabUser cabUser;
 
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(cabUser.getRoles().name()));

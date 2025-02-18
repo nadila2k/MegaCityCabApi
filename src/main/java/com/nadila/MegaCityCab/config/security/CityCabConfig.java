@@ -27,6 +27,7 @@ public class CityCabConfig {
     private final CabUserDetailesService userDetailesService;
 
 
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);

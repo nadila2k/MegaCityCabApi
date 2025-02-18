@@ -14,10 +14,13 @@ public class Drivers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String fName;
-    private String lName;
+    private String firstName;
+    private String lastName;
     private String address;
     private String mobileNumber;
+    private String vehicaleName;
+    @Column(unique = true)
+    private String vehicalNumber;
     private String imageUrl;
     private String imageId;
 
