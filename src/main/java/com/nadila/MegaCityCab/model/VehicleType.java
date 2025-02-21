@@ -20,7 +20,7 @@ public class VehicleType {
     private Long id;
 
     private String name;
-    private BigDecimal price;
+    private double price;
 
     @JsonIgnore
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
