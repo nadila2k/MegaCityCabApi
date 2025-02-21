@@ -11,6 +11,6 @@ public interface IDriverService {
     DriverDto createDriver(DriverRequest driverRequest, MultipartFile image);
     Drivers updateDriver(long id, Drivers drivers, MultipartFile image);
     void deleteDriver(long id);
-    Drivers getByFirstName(String firstName);
+    List<Drivers> getByFirstName(String firstName);
     List<Drivers> getAllDrivers();
 }

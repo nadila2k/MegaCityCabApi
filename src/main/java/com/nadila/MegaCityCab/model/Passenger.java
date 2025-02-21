@@ -19,7 +19,7 @@ public class Passenger {
     private String address;
     private String mobileNumber;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cabUser_Id")
     private CabUser cabUser;
 

@@ -1,10 +1,12 @@
 package com.nadila.MegaCityCab.service.Drivers;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.nadila.MegaCityCab.InBuildUseObjects.DriverImages;
 import com.nadila.MegaCityCab.dto.CabUserDto;
 import com.nadila.MegaCityCab.dto.DriverDto;
 import com.nadila.MegaCityCab.exception.AlreadyExistsException;
+import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.CabUser;
 import com.nadila.MegaCityCab.model.Drivers;
 import com.nadila.MegaCityCab.repository.CabUserRepository;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -62,22 +65,80 @@ public class DriverService implements IDriverService{
 
     @Override
     public Drivers updateDriver(long id, Drivers drivers, MultipartFile image) {
-        return null;
-    }
+        if (image.isEmpty()) {
+            return driverRepository.findById(id)
+                    .map(existingDriver  -> {
+                        if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
+                            boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
+                            if (exists) {
+                                throw new IllegalArgumentException("Vehicle number already exists");
+                            }
+                        }
+                        existingDriver.setFirstName(drivers.getFirstName());
+                        existingDriver.setLastName(drivers.getLastName());
+                        existingDriver.setAddress(drivers.getAddress());
+                        existingDriver.setMobileNumber(drivers.getMobileNumber());
+                        existingDriver.setVehicaleName(drivers.getVehicaleName());
+                        existingDriver.setVehicalNumber(drivers.getVehicalNumber());
+                        existingDriver.setVehicleType(drivers.getVehicleType());
 
+                        return driverRepository.save(existingDriver);
+
+                    }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
+        }else {
+            return driverRepository.findById(id)
+                    .map(existingDriver ->{
+                        if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
+                            Boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
+                            if (exists) {
+                                throw new IllegalArgumentException("Vehicle number already exists");
+                            }
+                        }
+                        try {
+                            deleteImage(drivers);
+                            DriverImages driverImages = uploadImage(image);
+
+                            existingDriver.setFirstName(drivers.getFirstName());
+                            existingDriver.setLastName(drivers.getLastName());
+                            existingDriver.setAddress(drivers.getAddress());
+                            existingDriver.setMobileNumber(drivers.getMobileNumber());
+                            existingDriver.setVehicaleName(drivers.getVehicaleName());
+                            existingDriver.setVehicalNumber(drivers.getVehicalNumber());
+                            existingDriver.setVehicleType(drivers.getVehicleType());
+                            existingDriver.setImageUrl(driverImages.getImageUrl());
+                            existingDriver.setImageId(driverImages.getImageId());
+                            return driverRepository.save(existingDriver);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+
+                    }).orElseThrow(() ->  new ResourceNotFound("Driver  not found"));
+        }
+    }
     @Override
     public void deleteDriver(long id) {
-
+        driverRepository.findById(id).ifPresentOrElse(drivers -> {
+            try {
+                deleteImage(drivers);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to delete image", e);
+            }
+            driverRepository.delete(drivers); // Delete driver after image is handled
+        }, () -> {
+            throw new ResourceNotFound("Driver not found");
+        });
     }
-
     @Override
-    public Drivers getByFirstName(String firstName) {
-        return null;
+    public List<Drivers> getByFirstName(String firstName) {
+        return Optional.ofNullable(driverRepository.findByFirstName(firstName))
+                .orElseThrow(() ->  new ResourceNotFound("Driver not found"));
     }
 
     @Override
     public List<Drivers> getAllDrivers() {
-        return List.of();
+        return driverRepository.findAll();
     }
 
     public DriverDto convertToDriverDto(CabUser cabUser, Drivers drivers){
@@ -124,6 +185,10 @@ public class DriverService implements IDriverService{
         } catch (IOException e) {
             throw new RuntimeException("Error uploading image", e);
         }
+    }
+
+    public void deleteImage(Drivers drivers) throws IOException {
+        cloudinary.uploader().destroy(drivers.getImageId(), ObjectUtils.emptyMap());
     }
 
 }

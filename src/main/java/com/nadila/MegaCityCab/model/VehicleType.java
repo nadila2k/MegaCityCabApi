@@ -23,6 +23,6 @@ public class VehicleType {
     private BigDecimal price;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vehicleType")
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Drivers> drivers;
 }

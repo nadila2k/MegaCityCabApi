@@ -24,11 +24,11 @@ public class Drivers {
     private String imageUrl;
     private String imageId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "vehicleType_Id")
     private VehicleType vehicleType;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cabUser_Id")
     private CabUser cabUser;
 }
