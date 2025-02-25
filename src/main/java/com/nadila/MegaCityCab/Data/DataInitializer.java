@@ -36,7 +36,8 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
 
         String email = "Admin@gmail.com";
         String password = "Admin";
-        String userName = "Admin Manager";
+        String firstName = "Admin";
+        String lastName = "Manager";
 
         if (!userRepository.existsByEmail(email)) {
             CabUser cabUser = new CabUser();
@@ -47,7 +48,8 @@ public class DataInitializer implements ApplicationListener<ApplicationReadyEven
             CabUser adminUser =  userRepository.save(cabUser);
 
             Admin admin = new Admin();
-            admin.setName(userName);
+            admin.setFirstName(firstName);
+            admin.setLastName(lastName);
             admin.setCabUser(adminUser);
             adminRepository.save(admin);
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DriverImages {
+public class ImagesObj {
     private String imageUrl;
     private String imageId;
 }

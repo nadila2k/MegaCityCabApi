@@ -15,9 +15,10 @@ public class Admin {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String firstName;
+    private String lastName;
 
     @OneToOne
-    @JoinColumn(name = "cabUser_Id")
+    @JoinColumn(name = "cab_user_id")
     private CabUser cabUser;
 }

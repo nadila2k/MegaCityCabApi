@@ -1,6 +1,7 @@
 package com.nadila.MegaCityCab.controller;
 
 import com.nadila.MegaCityCab.dto.PassengerDto;
+import com.nadila.MegaCityCab.enums.ResponseStatus;
 import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.model.CabUser;
 import com.nadila.MegaCityCab.model.Passenger;
@@ -29,9 +30,9 @@ public class PassengerController {
         System.out.println(passangerRequest+ "controller");
         try {
             PassengerDto passenger = passangerService.createUser(passangerRequest);
-            return ResponseEntity.ok(new ApiResponse("User created successfully",passenger));
+            return ResponseEntity.ok(new ApiResponse(ResponseStatus.SUCCESS,"User created successfully",passenger));
         } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(e.getMessage(),null));
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ResponseStatus.FAILURE,e.getMessage(),null));
         }
     }
 }

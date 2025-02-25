@@ -22,7 +22,7 @@ public class Passenger {
     private String mobileNumber;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "cabUser_Id")
+    @JoinColumn(name = "cab_user_id")
     private CabUser cabUser;
 
     @OneToMany(mappedBy = "passenger",cascade = CascadeType.ALL,orphanRemoval = true)
