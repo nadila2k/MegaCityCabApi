@@ -6,5 +6,5 @@ import com.nadila.MegaCityCab.model.Passenger;
 import com.nadila.MegaCityCab.requests.PassangerRequest;
 
 public interface IPassangerService {
-    PassengerDto createUser(PassangerRequest passangerRequest);
+
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class JwtUserData {
+public class UserData {
     private Long id;
     private Roles roles;
     private String email;

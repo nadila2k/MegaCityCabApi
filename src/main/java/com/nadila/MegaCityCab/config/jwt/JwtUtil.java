@@ -1,11 +1,9 @@
 package com.nadila.MegaCityCab.config.jwt;
 
-import com.nadila.MegaCityCab.enums.Roles;
-import com.nadila.MegaCityCab.service.AuthService.CabUserDetailes;
+import com.nadila.MegaCityCab.service.AuthService.CabUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.apache.hc.core5.function.Decorator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -26,7 +24,7 @@ public class JwtUtil {
 
 
     public String generateTokenForUser(Authentication authentication){
-        CabUserDetailes cabUserDetailes = (CabUserDetailes) authentication.getPrincipal();
+        CabUserDetails cabUserDetailes = (CabUserDetails) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject(cabUserDetailes.getCabUser().getEmail())

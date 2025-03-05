@@ -1,6 +1,6 @@
 package com.nadila.MegaCityCab.response;
 
-import com.nadila.MegaCityCab.InBuildUseObjects.JwtUserData;
+import com.nadila.MegaCityCab.InBuildUseObjects.UserData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JwtResponse {
-    private JwtUserData jwtUserData;
+    private UserData userData;
     private String token;
 }

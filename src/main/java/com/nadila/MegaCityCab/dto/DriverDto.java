@@ -10,6 +10,7 @@ public class DriverDto {
     private String lastName;
     private String address;
     private String mobileNumber;
+    private int licenseNumber;
     private String vehicaleName;
     private String vehicalNumber;
     private String imageUrl;

@@ -5,6 +5,6 @@ public enum BookingStatus {
     DRIVERCONFIRMED,
     COMPLETED,
     CANCELLEDBYDRIVER,
-    CANCELLEDBYCUSTOMER
+
 
 }

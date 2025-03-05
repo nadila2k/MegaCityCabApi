@@ -19,6 +19,7 @@ public class GetAuthId {
         if (principal instanceof UserDetails) {
             String email = ((UserDetails) principal).getUsername();
             CabUser cabUser = userRepository.findByEmail(email);
+
             if (cabUser != null) {
                 return cabUser.getId();
             } else {
@@ -27,5 +28,6 @@ public class GetAuthId {
         } else {
             throw new ResourceNotFound("User authentication failed");
         }
+
     }
 }

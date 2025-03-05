@@ -1,6 +1,6 @@
 package com.nadila.MegaCityCab.config.jwt;
 
-import com.nadila.MegaCityCab.service.AuthService.CabUserDetailesService;
+import com.nadila.MegaCityCab.service.AuthService.CabUserDetailsService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,7 +22,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private CabUserDetailesService userDetailesService;
+    private CabUserDetailsService userDetailesService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

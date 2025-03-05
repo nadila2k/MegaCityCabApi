@@ -1,7 +1,5 @@
 package com.nadila.MegaCityCab.service.Drivers;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.utils.ObjectUtils;
 import com.nadila.MegaCityCab.InBuildUseObjects.ImagesObj;
 import com.nadila.MegaCityCab.dto.CabUserDto;
 import com.nadila.MegaCityCab.dto.DriverDto;
@@ -14,17 +12,14 @@ import com.nadila.MegaCityCab.repository.DriverRepository;
 import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
 import com.nadila.MegaCityCab.requests.DriverRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
-import com.nadila.MegaCityCab.service.image.IImageService;
-import com.nadila.MegaCityCab.service.image.ImageService;
+import com.nadila.MegaCityCab.service.Image.IImageService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -38,34 +33,7 @@ public class DriverService implements IDriverService{
     private final PasswordEncoder passwordEncoder;
     private final GetAuthId getAuthId;
 
-    @Override
-    public DriverDto createDriver(DriverRequest driverRequest, MultipartFile image) {
 
-        return Optional.of(driverRequest)
-                .filter(user -> !userRepository.existsByEmail(driverRequest.getEmail()) && !driverRepository.existsByVehicalNumber(driverRequest.getVehicalNumber())
-                && vehicaleTypeRepository.existsByName(driverRequest.getVehicleType().getName()))
-                .map(driverRequest1 -> {
-                    CabUser cabUser = new CabUser();
-                    cabUser.setEmail(driverRequest.getEmail());
-                    cabUser.setPassword(passwordEncoder.encode(driverRequest.getPassword()));
-                    return userRepository.save(cabUser);
-                }).map(cabUser -> {
-                     ImagesObj images = imageService.uploadImage(image);
-
-                     Drivers drivers = new Drivers();
-                     drivers.setFirstName(driverRequest.getFirstName());
-                     drivers.setLastName(driverRequest.getLastName());
-                     drivers.setAddress(driverRequest.getAddress());
-                     drivers.setMobileNumber(driverRequest.getMobileNumber());
-                     drivers.setVehicaleName(driverRequest.getVehicaleName());
-                     drivers.setVehicalNumber(driverRequest.getVehicalNumber());
-                     drivers.setImageUrl(images.getImageUrl());
-                     drivers.setImageId(images.getImageId());
-                     drivers.setVehicleType(driverRequest.getVehicleType());
-                    driverRepository.save(drivers);
-                     return convertToDriverDto(cabUser, drivers);
-                }).orElseThrow(() -> new AlreadyExistsException("Email or Vehicle number already exists"));
-    }
 
     @Override
     public Drivers updateDriver(long id, Drivers drivers, MultipartFile image) {
@@ -83,6 +51,7 @@ public class DriverService implements IDriverService{
                         existingDriver.setLastName(drivers.getLastName());
                         existingDriver.setAddress(drivers.getAddress());
                         existingDriver.setMobileNumber(drivers.getMobileNumber());
+                        existingDriver.setLicenseNumber(drivers.getLicenseNumber());
                         existingDriver.setVehicaleName(drivers.getVehicaleName());
                         existingDriver.setVehicalNumber(drivers.getVehicalNumber());
                         existingDriver.setVehicleType(drivers.getVehicleType());
@@ -110,6 +79,7 @@ public class DriverService implements IDriverService{
                         existingDriver.setLastName(drivers.getLastName());
                         existingDriver.setAddress(drivers.getAddress());
                         existingDriver.setMobileNumber(drivers.getMobileNumber());
+                        existingDriver.setLicenseNumber(drivers.getLicenseNumber());
                         existingDriver.setVehicaleName(drivers.getVehicaleName());
                         existingDriver.setVehicalNumber(drivers.getVehicalNumber());
                         existingDriver.setVehicleType(drivers.getVehicleType());

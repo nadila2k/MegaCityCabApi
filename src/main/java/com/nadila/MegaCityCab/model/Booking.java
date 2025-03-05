@@ -18,6 +18,7 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
     private String pickupLocation;
     private String destinationLocation;
@@ -25,8 +26,13 @@ public class Booking {
     private double pricePerKM;
     private double totalPrice;
 
+
     @Enumerated(EnumType.STRING)
     private BookingStatus bookingStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "vehicle_type_id")
+    private VehicleType vehicleType;
 
     @ManyToOne
     @JoinColumn(name = "driver_Id")
@@ -38,6 +44,7 @@ public class Booking {
 
 
     @PrePersist
+    @PreUpdate
     public void setTotalPrice() {
         this.totalPrice = this.pricePerKM * this.totalDistanceKM;
     }

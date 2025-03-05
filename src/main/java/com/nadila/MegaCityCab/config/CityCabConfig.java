@@ -2,7 +2,7 @@ package com.nadila.MegaCityCab.config;
 
 import com.cloudinary.Cloudinary;
 import com.nadila.MegaCityCab.config.jwt.AuthTokenFilter;
-import com.nadila.MegaCityCab.service.AuthService.CabUserDetailesService;
+import com.nadila.MegaCityCab.service.AuthService.CabUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +28,7 @@ import java.util.Map;
 @EnableMethodSecurity(prePostEnabled = true)
 public class CityCabConfig {
 
-    private final CabUserDetailesService userDetailesService;
+    private final CabUserDetailsService userDetailesService;
 
 
     @Bean
@@ -67,7 +67,7 @@ public class CityCabConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/login").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger","api/v1/auth/sign-up/driver" ).permitAll()
                         .anyRequest().authenticated());
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
         httpSecurity.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);

@@ -20,6 +20,7 @@ public class Drivers {
     private String lastName;
     private String address;
     private String mobileNumber;
+    private int licenseNumber;
     private String vehicaleName;
     @Column(unique = true)
     private String vehicalNumber;
@@ -27,7 +28,7 @@ public class Drivers {
     private String imageId;
 
     @ManyToOne()
-    @JoinColumn(name = "vehicleType_Id")
+    @JoinColumn(name = "vehicle_type_id")
     private VehicleType vehicleType;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

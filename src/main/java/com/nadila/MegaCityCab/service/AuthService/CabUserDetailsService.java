@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CabUserDetailesService implements UserDetailsService {
+public class CabUserDetailsService implements UserDetailsService {
 
     private final CabUserRepository userRepository;
 
@@ -21,6 +21,6 @@ public class CabUserDetailesService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         CabUser cabUser =  Optional.ofNullable(userRepository.findByEmail(email))
                 .orElseThrow(() -> new ResourceNotFound("User not found!"));
-        return new CabUserDetailes(cabUser);
+        return new CabUserDetails(cabUser);
     }
 }

@@ -1,9 +1,8 @@
-package com.nadila.MegaCityCab.service.image;
+package com.nadila.MegaCityCab.service.Image;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import com.nadila.MegaCityCab.InBuildUseObjects.ImagesObj;
-import com.nadila.MegaCityCab.model.Drivers;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

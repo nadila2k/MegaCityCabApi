@@ -25,4 +25,7 @@ public class VehicleType {
     @JsonIgnore
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Drivers> drivers;
+
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Booking> bookings;
 }
