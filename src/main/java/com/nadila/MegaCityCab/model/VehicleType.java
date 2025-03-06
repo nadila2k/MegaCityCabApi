@@ -25,10 +25,10 @@ public class VehicleType {
     private String imageId;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL)
     private List<Drivers> drivers;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL)
     private List<Booking> bookings;
 }

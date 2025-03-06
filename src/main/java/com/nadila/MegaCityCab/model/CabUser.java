@@ -24,13 +24,13 @@ public class CabUser {
     @Enumerated(EnumType.STRING)
     private Roles roles;
 
-    @OneToOne(mappedBy = "cabUser")
+    @OneToOne(mappedBy = "cabUser", cascade = CascadeType.ALL)
     private Admin admin;
 
-    @OneToOne(mappedBy = "cabUser")
+    @OneToOne(mappedBy = "cabUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Drivers driver;
 
-    @OneToOne(mappedBy = "cabUser")
+    @OneToOne(mappedBy = "cabUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Passenger passenger;
 
 

@@ -3,8 +3,7 @@ package com.nadila.MegaCityCab.controller;
 import com.nadila.MegaCityCab.dto.PassengerDto;
 import com.nadila.MegaCityCab.enums.ResponseStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
-import com.nadila.MegaCityCab.model.Passenger;
-import com.nadila.MegaCityCab.requests.PassangerUpdateRequest;
+import com.nadila.MegaCityCab.requests.PassengerUpdateRequest;
 import com.nadila.MegaCityCab.response.ApiResponse;
 import com.nadila.MegaCityCab.service.Passenger.IPassengerService;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +22,21 @@ public class PassengerController {
 
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse> updatePassenger(@RequestBody PassangerUpdateRequest passangerUpdateRequest) {
+    public ResponseEntity<ApiResponse> updatePassenger(@RequestBody PassengerUpdateRequest passangerUpdateRequest) {
 
         try {
             PassengerDto passengerDto = passengerService.updatePassenger(passangerUpdateRequest);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Passenger Updated", passengerDto));
         } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR, "not found", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "not found", e.getMessage()));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
         }
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all/passenger")
     public ResponseEntity<ApiResponse> getAllPassenger() {
 
         try {
@@ -45,7 +44,7 @@ public class PassengerController {
 
             return ResponseEntity.ok().body(new ApiResponse(ResponseStatus.SUCCESS, "All Passengers", passengerDto));
         } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR, "not found", e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "not found", e.getMessage()));
         }catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
@@ -59,7 +58,7 @@ public class PassengerController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse(ResponseStatus.SUCCESS, "Passenger Deleted", null));
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new ApiResponse(ResponseStatus.ERROR, "Passenger not found", e.getMessage()));
+                    .body(new ApiResponse(ResponseStatus.FAILURE, "Passenger not found", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ApiResponse(ResponseStatus.ERROR, "Deletion failed", e.getMessage()));

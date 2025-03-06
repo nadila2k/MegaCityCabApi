@@ -31,7 +31,7 @@ public class VehicleTypeController {
 
             return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(ResponseStatus.SUCCESS,"Vehicale Type Add Success",vehicleType));
         }catch(AlreadyExistsException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR,"already exists",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"already exists",e.getMessage()));
         }catch (IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"Image upload fail ",e.getMessage()));
         }
@@ -49,7 +49,7 @@ public class VehicleTypeController {
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Vehicale Type Update Success",updateVehicalType));
         } catch (ResourceNotFound e) {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR,"Vehicle type not found.",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"Vehicle type not found.",e.getMessage()));
         }catch (IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,e.getMessage(),"Image upload failed"));
         } catch (Exception e) {
@@ -65,7 +65,7 @@ public class VehicleTypeController {
 
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"success",vehicleTypes ));
         }catch(ResourceNotFound e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR,"not found",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"not found",e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"server error",e.getMessage()));
         }
@@ -78,7 +78,7 @@ public class VehicleTypeController {
             vehicaleTypeService.deleteVehicalType(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new ApiResponse(ResponseStatus.SUCCESS,"success",null));
         }catch(ResourceNotFound e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR,"not found",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"not found",e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"server error",e.getMessage()));
         }
@@ -91,7 +91,7 @@ public class VehicleTypeController {
             VehicleType vehicleType = vehicaleTypeService.getVehicalTypeByName(name);
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"success",vehicleType));
         } catch (ResourceNotFound e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.ERROR,"not found",e.getMessage()));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"not found",e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"server error",e.getMessage()));
         }

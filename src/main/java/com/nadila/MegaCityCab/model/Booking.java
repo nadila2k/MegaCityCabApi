@@ -42,7 +42,7 @@ public class Booking {
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 
-    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, orphanRemoval = true)
     private Payment payment;
 
 

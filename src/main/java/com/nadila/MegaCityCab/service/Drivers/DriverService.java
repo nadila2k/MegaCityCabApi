@@ -11,6 +11,7 @@ import com.nadila.MegaCityCab.repository.CabUserRepository;
 import com.nadila.MegaCityCab.repository.DriverRepository;
 import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
 import com.nadila.MegaCityCab.requests.DriverRequest;
+import com.nadila.MegaCityCab.requests.DriverUpdateRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
 import com.nadila.MegaCityCab.service.Image.IImageService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class DriverService implements IDriverService{
+public class DriverService implements IDriverService {
 
     private final CabUserRepository userRepository;
     private final VehicaleTypeRepository vehicaleTypeRepository;
@@ -34,15 +35,15 @@ public class DriverService implements IDriverService{
     private final PasswordEncoder passwordEncoder;
     private final GetAuthId getAuthId;
     private final ModelMapper modelMapper;
-
+    private final CabUserRepository cabUserRepository;
 
 
     @Override
-    public DriverDto updateDriver(long id, Drivers drivers, MultipartFile image) {
+    public DriverDto updateDriver(DriverUpdateRequest drivers, MultipartFile image) {
 
         if (image.isEmpty()) {
             return driverRepository.findById(getAuthUserId())
-                    .map(existingDriver  -> {
+                    .map(existingDriver -> {
                         if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
                             boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
                             if (exists) {
@@ -61,9 +62,9 @@ public class DriverService implements IDriverService{
                         return convertToDriverDto(driverRepository.save(existingDriver));
 
                     }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
-        }else {
-            return driverRepository.findById(id)
-                    .map(existingDriver ->{
+        } else {
+            return driverRepository.findById(getAuthUserId())
+                    .map(existingDriver -> {
                         if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
                             Boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
                             if (exists) {
@@ -90,26 +91,29 @@ public class DriverService implements IDriverService{
                         return convertToDriverDto(driverRepository.save(existingDriver));
 
 
-                    }).orElseThrow(() ->  new ResourceNotFound("Driver  not found"));
+                    }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
         }
     }
+
     @Override
-    public void deleteDriver(long id) {
-        driverRepository.findById(id).ifPresentOrElse(drivers -> {
-            try {
-                imageService.deleteImage(drivers.getImageId());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            driverRepository.delete(drivers);
-        }, () -> {
-            throw new ResourceNotFound("Driver not found");
-        });
-    }
-    @Override
-    public List<DriverDto> getByFirstName(String firstName) {
-        return Optional.of(driverRepository.findByFirstName(firstName).stream().map(this::convertToDriverDto).toList())
-                .orElseThrow(() ->  new ResourceNotFound("Driver not found"));
+    public void deleteDriver(String email, String password) {
+        cabUserRepository.findById(getAuthId.getCurrentUserId())
+                .ifPresentOrElse(cabUser -> {
+
+                    if (!email.equals(cabUser.getEmail())) {
+                        throw new RuntimeException("Email mismatch. Cannot delete account.");
+                    }
+                    if (!passwordEncoder.matches(password, cabUser.getPassword())) {
+                        throw new RuntimeException("Incorrect password. Cannot delete account.");
+                    }
+
+
+                    cabUserRepository.deleteById(cabUser.getId());
+
+
+                }, () -> {
+                    throw new ResourceNotFound("Driver not found");
+                });
     }
 
     @Override
@@ -117,29 +121,16 @@ public class DriverService implements IDriverService{
         return driverRepository.findAll().stream().map(this::convertToDriverDto).toList();
     }
 
-    public DriverDto convertToDriverDto(CabUser cabUser, Drivers drivers){
-       CabUserDto cabUserDto = new CabUserDto();
-       cabUserDto.setId(cabUser.getId());
-       cabUserDto.setRoles(cabUser.getRoles());
-       cabUserDto.setEmail(cabUser.getEmail());
-
-       DriverDto driverDto = new DriverDto();
-       driverDto.setId(drivers.getId());
-       driverDto.setFirstName(drivers.getFirstName());
-       driverDto.setLastName(drivers.getLastName());
-       driverDto.setAddress(drivers.getAddress());
-       driverDto.setMobileNumber(drivers.getMobileNumber());
-       driverDto.setVehicaleName(drivers.getVehicaleName());
-       driverDto.setVehicalNumber(drivers.getVehicalNumber());
-       driverDto.setImageUrl(drivers.getImageUrl());
-       driverDto.setImageId(drivers.getImageId());
-       driverDto.setCabUserDto(cabUserDto);
-       driverDto.setVehicleType(drivers.getVehicleType());
-
-       return driverDto;
+    @Override
+    public List<DriverDto> getByFirstName(String firstName) {
+        return Optional.of(driverRepository.findByFirstName(firstName).stream().map(this::convertToDriverDto).toList())
+                .orElseThrow(() -> new ResourceNotFound("Driver not found"));
     }
 
-    public Long getAuthUserId(){
+
+
+
+    public Long getAuthUserId() {
 
         Drivers driver = driverRepository.findByCabUserId(getAuthId.getCurrentUserId());
         if (driver != null) {
@@ -150,8 +141,8 @@ public class DriverService implements IDriverService{
 
     }
 
-    public DriverDto convertToDriverDto( Drivers drivers){
-       return modelMapper.map(drivers,DriverDto.class);
+    public DriverDto convertToDriverDto(Drivers drivers) {
+        return modelMapper.map(drivers, DriverDto.class);
     }
 
 }

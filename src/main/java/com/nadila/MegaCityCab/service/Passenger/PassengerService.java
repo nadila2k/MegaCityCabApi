@@ -5,16 +5,14 @@ import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.Passenger;
 import com.nadila.MegaCityCab.repository.CabUserRepository;
 import com.nadila.MegaCityCab.repository.PassengerRepository;
-import com.nadila.MegaCityCab.requests.PassangerUpdateRequest;
+import com.nadila.MegaCityCab.requests.PassengerUpdateRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +26,7 @@ public class PassengerService implements IPassengerService {
 
 
     @Override
-    public PassengerDto updatePassenger(PassangerUpdateRequest passengerUpdateRequest) {
+    public PassengerDto updatePassenger(PassengerUpdateRequest passengerUpdateRequest) {
         return passengerRepository.findById(getUserId())
                 .map(exisitingPassenger -> {
                     exisitingPassenger.setFirstName(passengerUpdateRequest.getFirstName());
@@ -59,7 +57,7 @@ public class PassengerService implements IPassengerService {
                     }
 
 
-                    passengerRepository.findByCabUserId(cabUser.getId());
+                    cabUserRepository.deleteById(cabUser.getId());
 
 
                 }, () -> {

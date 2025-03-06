@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassangerUpdateRequest {
+public class PassengerUpdateRequest {
 
     private String firstName;
     private String lastName;
