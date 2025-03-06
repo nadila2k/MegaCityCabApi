@@ -11,7 +11,7 @@ public interface IBookingService {
 
     BookingDto createBooking(BookingRequest booking);
     void deleteBooking(long id);
-    BookingDto pasangerUpdateBooking(Booking booking);
+    BookingDto pasangerUpdateBooking(long id, Booking booking);
     List<BookingDto> getBookingsByVehicleTypeAndStatus();
     BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus);
 }

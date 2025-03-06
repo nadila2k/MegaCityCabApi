@@ -28,23 +28,20 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final AdminRepository adminRepository;
-    private final DriverRepository driverRepository;
-    private final PassengerRepository passengerRepository;
-    private final JwtUtil jwtUtil;
-    private final IPassengerService passengerService;
+
     private final LoginService loginService;
 
     @PostMapping("/sign-in")
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request) {
         System.out.println("test login");
         try {
-                    JwtResponse jwtResponse = loginService.signin(request);
+            JwtResponse jwtResponse = loginService.signin(request);
 
-            return ResponseEntity.ok(new ApiResponse(ResponseStatus.SUCCESS,"Login Success!", jwtResponse));
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Login Success!", jwtResponse));
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
         }
 
     }
@@ -53,24 +50,28 @@ public class AuthController {
     public ResponseEntity<ApiResponse> passengerSignup(@RequestBody PassangerRequest passangerRequest) {
         try {
             JwtResponse jwtResponse = loginService.passengerSignup(passangerRequest);
-            return ResponseEntity.ok(new ApiResponse(ResponseStatus.SUCCESS,"User signup successfully",jwtResponse));
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "User signup successfully", jwtResponse));
         } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ResponseStatus.FAILURE,e.getMessage(),null));
-        }catch (AuthenticationException e) {
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
         }
     }
 
 
     @PostMapping("/sign-up/driver")
-    public  ResponseEntity<ApiResponse> driverSignup(@RequestPart DriverRequest driverRequest, @RequestPart MultipartFile image) {
+    public ResponseEntity<ApiResponse> driverSignup(@RequestPart DriverRequest driverRequest, @RequestPart MultipartFile image) {
         try {
-            JwtResponse jwtResponse = loginService.driverSignup(driverRequest,image);
-            return ResponseEntity.ok(new ApiResponse(ResponseStatus.SUCCESS,"Driver signup successfully",jwtResponse));
+            JwtResponse jwtResponse = loginService.driverSignup(driverRequest, image);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Driver signup successfully", jwtResponse));
         } catch (AlreadyExistsException e) {
-            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ResponseStatus.FAILURE,e.getMessage(),null));
-        }catch (AuthenticationException e) {
+            return ResponseEntity.status(CONFLICT).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
+        } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.FAILURE, e.getMessage(), null));
         }
     }
 

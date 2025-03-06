@@ -5,6 +5,7 @@ import com.nadila.MegaCityCab.dto.BookingDto;
 import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.Booking;
+import com.nadila.MegaCityCab.model.Drivers;
 import com.nadila.MegaCityCab.model.Passenger;
 import com.nadila.MegaCityCab.repository.*;
 import com.nadila.MegaCityCab.requests.BookingRequest;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.sql.Driver;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,22 +56,8 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public void deleteBooking(long id) {
-    bookingRepository.findById(id)
-            .ifPresentOrElse(
-                    booking -> {
-                        if(booking.getPayment() != null) {
-                            paymentRepository.deleteById(booking.getPayment().getId());
-                        }
-                        bookingRepository.delete(booking);
-                    },
-                    () -> { throw new ResourceNotFound("Booking delete failed: No valid booking found");}
-            );
-    }
-
-    @Override
-    public BookingDto pasangerUpdateBooking(Booking booking) {
-        return bookingRepository.findById(booking.getId()).map(existingBooking -> {
+    public BookingDto pasangerUpdateBooking(long id, Booking booking) {
+        return bookingRepository.findById(id).map(existingBooking -> {
             existingBooking.setDate(booking.getDate());
             existingBooking.setBookingStatus(booking.getBookingStatus());
             existingBooking.setPickupLocation(booking.getPickupLocation());
@@ -97,27 +85,54 @@ public class BookingService implements IBookingService {
                 .orElseThrow(() -> new ResourceNotFound("Driver not found"));
     }
 
+
     @Override
     public BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus) {
-        long userId = getAuthId.getCurrentUserId();
+
+        Drivers driver = driverRepository.findByCabUserId(getAuthId.getCurrentUserId());
+
+        if (driver == null) {
+            throw new ResourceNotFound("Driver not found");
+        }
 
         return bookingRepository.findById(id).map(booking -> {
             if (BookingStatus.DRIVERCONFIRMED.equals(bookingStatus)) {
                 booking.setBookingStatus(bookingStatus);
-                booking.setDrivers(driverRepository.findByCabUserId(userId));
+                booking.setDrivers(driverRepository.findByCabUserId(driver.getId()));
                 paymentService.createPayment(booking);
 
-            } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus)) {
+            } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId()) ) {
                 booking.setBookingStatus(bookingStatus);
                 booking.setDrivers(null);
 
-            } else if (BookingStatus.COMPLETED.equals(bookingStatus)) {
+            } else if (BookingStatus.COMPLETED.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())){
                 booking.setBookingStatus(bookingStatus);
                 paymentService.updatePayment(booking);
             }
             return getBookingDto(bookingRepository.save(booking));
         }).orElseThrow(() -> new ResourceNotFound("Booking not found"));
     }
+
+
+    @Override
+    public void deleteBooking(long id) {
+    bookingRepository.findById(id)
+            .ifPresentOrElse(
+                    booking -> {
+                        if(booking.getPayment() != null) {
+                            paymentRepository.deleteById(booking.getPayment().getId());
+                        }
+                        bookingRepository.delete(booking);
+                    },
+                    () -> { throw new ResourceNotFound("Booking delete failed: No valid booking found");}
+            );
+    }
+
+
+
+
+
+
 
 
 
