@@ -21,11 +21,14 @@ public class VehicleType {
 
     private String name;
     private double price;
+    private String imageUrl;
+    private String imageId;
 
     @JsonIgnore
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Drivers> drivers;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "vehicleType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Booking> bookings;
 }

@@ -1,5 +1,7 @@
 package com.nadila.MegaCityCab.service.Booking;
 
+import com.nadila.MegaCityCab.dto.BookingDto;
+import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.model.Booking;
 import com.nadila.MegaCityCab.requests.BookingRequest;
 
@@ -7,9 +9,9 @@ import java.util.List;
 
 public interface IBookingService {
 
-    Booking createBooking(BookingRequest booking);
+    BookingDto createBooking(BookingRequest booking);
     void deleteBooking(Booking booking);
-    Booking pasangerUpdateBooking(Booking booking);
-    List<Booking> getBookingsByVehicleTypeAndStatus(Long vehicaleTypeId);
-
+    BookingDto pasangerUpdateBooking(Booking booking);
+    List<BookingDto> getBookingsByVehicleTypeAndStatus();
+    BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus);
 }
