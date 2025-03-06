@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,8 @@ public class VehicalTypeService implements IVehicalTypeService {
                 .filter( vehicleType1 -> !vehicaleTypeRepository.existsByName(vehicaleTypeRequest.getName()))
                 .map(vehicaleTypeRequest1 -> {
 
-                    ImagesObj imagesObj =  imageService.uploadImage(image);
+
+                    ImagesObj imagesObj = imageService.uploadImage(image);
                     VehicleType vehicleType = new VehicleType();
 
                     vehicleType.setName(vehicaleTypeRequest.getName());
@@ -43,13 +45,38 @@ public class VehicalTypeService implements IVehicalTypeService {
     }
 
     @Override
-    public VehicleType updateVehicalType(long id, VehicleType vehicleType) {
-        return vehicaleTypeRepository.findById(id)
-                .map(vehicleType1 -> {
-                    vehicleType1.setName(vehicleType.getName());
-                    vehicleType1.setPrice(vehicleType.getPrice());
-                    return vehicaleTypeRepository.save(vehicleType1);
-                }).orElseThrow(() -> new ResourceNotFound("Vehicle type not found"));
+    public VehicleType updateVehicalType(long id, VehicleType vehicleType,  MultipartFile image) {
+
+        if (image.isEmpty()) {
+            return vehicaleTypeRepository.findById(id)
+                    .map(existingType -> {
+                        existingType.setName(vehicleType.getName());
+                        existingType.setPrice(vehicleType.getPrice());
+                        return vehicaleTypeRepository.save(existingType);
+                    }).orElseThrow(() -> new ResourceNotFound("Vehicle type not found."));
+        }else{
+            return vehicaleTypeRepository.findById(id)
+                    .map(existingtype -> {
+                        try {
+                            imageService.deleteImage(existingtype.getImageId());
+                            ImagesObj imagesObj = imageService.uploadImage(image);
+                            existingtype.setImageUrl(imagesObj.getImageUrl());
+                            existingtype.setImageId(imagesObj.getImageId());
+                            existingtype.setName(vehicleType.getName());
+                            existingtype.setPrice(vehicleType.getPrice());
+                            return vehicaleTypeRepository.save(existingtype);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+
+                    }).orElseThrow(() ->  new ResourceNotFound("Vehicle type not found."));
+        }
+    }
+
+    @Override
+    public List<VehicleType> getAllVehicalType() {
+        return vehicaleTypeRepository.findAll();
     }
 
     @Override
@@ -58,10 +85,7 @@ public class VehicalTypeService implements IVehicalTypeService {
                 .ifPresentOrElse(vehicaleTypeRepository::delete,() -> {throw new ResourceNotFound("Vehicle type not found");});
     }
 
-    @Override
-    public List<VehicleType> getAllVehicalType() {
-        return vehicaleTypeRepository.findAll();
-    }
+
 
     @Override
     public VehicleType getVehicalTypeByName(String name) {

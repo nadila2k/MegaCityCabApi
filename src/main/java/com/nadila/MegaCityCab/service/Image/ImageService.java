@@ -19,7 +19,7 @@ public class ImageService implements IImageService{
     public ImagesObj uploadImage(MultipartFile file) {
         String fileName = file.getOriginalFilename();
 
-        // Validate file extension
+
         if (fileName != null && !fileName.matches("(?i).*\\.(jpg|jpeg|png)$")) {
             throw new IllegalArgumentException("Invalid file format. Only JPG, JPEG, and PNG are allowed.");
         }

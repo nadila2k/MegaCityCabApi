@@ -9,7 +9,7 @@ import java.util.List;
 public interface IVehicalTypeService {
 
     VehicleType createVehicalType(VehicaleTypeRequest vehicaleTypeRequest, MultipartFile image);
-    VehicleType updateVehicalType(long id, VehicleType vehicleType);
+    VehicleType updateVehicalType(long id, VehicleType vehicleType, MultipartFile image);
     void deleteVehicalType(long id);
     List<VehicleType>  getAllVehicalType();
     VehicleType getVehicalTypeByName(String name);
