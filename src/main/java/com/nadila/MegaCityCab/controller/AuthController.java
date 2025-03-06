@@ -12,7 +12,7 @@ import com.nadila.MegaCityCab.requests.PassangerRequest;
 import com.nadila.MegaCityCab.response.ApiResponse;
 import com.nadila.MegaCityCab.response.JwtResponse;
 import com.nadila.MegaCityCab.service.AuthService.LoginService;
-import com.nadila.MegaCityCab.service.Passenger.IPassangerService;
+import com.nadila.MegaCityCab.service.Passenger.IPassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +33,7 @@ public class AuthController {
     private final DriverRepository driverRepository;
     private final PassengerRepository passengerRepository;
     private final JwtUtil jwtUtil;
-    private final IPassangerService passengerService;
+    private final IPassengerService passengerService;
     private final LoginService loginService;
 
     @PostMapping("/sign-in")

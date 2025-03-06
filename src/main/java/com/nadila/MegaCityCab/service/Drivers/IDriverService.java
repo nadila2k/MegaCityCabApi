@@ -8,8 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface IDriverService {
-    Drivers updateDriver(long id, Drivers drivers, MultipartFile image);
+    DriverDto updateDriver(long id, Drivers drivers, MultipartFile image);
     void deleteDriver(long id);
-    List<Drivers> getByFirstName(String firstName);
-    List<Drivers> getAllDrivers();
+    List<DriverDto> getByFirstName(String firstName);
+    List<DriverDto> getAllDrivers();
 }

@@ -21,4 +21,5 @@ public class BookingDto {
     private PassengerDto passenger;
     private DriverDto driver;
     private VehicleType vehicleType;
+    private PaymentDto payment;
 }

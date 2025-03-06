@@ -6,12 +6,10 @@ import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.Booking;
 import com.nadila.MegaCityCab.model.Passenger;
-import com.nadila.MegaCityCab.repository.BookingRepository;
-import com.nadila.MegaCityCab.repository.DriverRepository;
-import com.nadila.MegaCityCab.repository.PassengerRepository;
-import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
+import com.nadila.MegaCityCab.repository.*;
 import com.nadila.MegaCityCab.requests.BookingRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
+import com.nadila.MegaCityCab.service.PaymentService.IPaymentService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,8 @@ public class BookingService implements IBookingService {
     private final PassengerRepository passengerRepository;
     private final DriverRepository driverRepository;
     private final ModelMapper modelMapper;
+    private final IPaymentService paymentService;
+    private final PaymentRepository  paymentRepository;
 
 
     @Override
@@ -54,11 +54,17 @@ public class BookingService implements IBookingService {
     }
 
     @Override
-    public void deleteBooking(Booking booking) {
-
-        bookingRepository.findById(booking.getId()).ifPresentOrElse(bookingRepository::delete, () -> {
-            throw new ResourceNotFound("Booking process failed: No valid passenger or vehicle type found");
-        });
+    public void deleteBooking(long id) {
+    bookingRepository.findById(id)
+            .ifPresentOrElse(
+                    booking -> {
+                        if(booking.getPayment() != null) {
+                            paymentRepository.deleteById(booking.getPayment().getId());
+                        }
+                        bookingRepository.delete(booking);
+                    },
+                    () -> { throw new ResourceNotFound("Booking delete failed: No valid booking found");}
+            );
     }
 
     @Override
@@ -99,6 +105,7 @@ public class BookingService implements IBookingService {
             if (BookingStatus.DRIVERCONFIRMED.equals(bookingStatus)) {
                 booking.setBookingStatus(bookingStatus);
                 booking.setDrivers(driverRepository.findByCabUserId(userId));
+                paymentService.createPayment(booking);
 
             } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus)) {
                 booking.setBookingStatus(bookingStatus);
@@ -106,6 +113,7 @@ public class BookingService implements IBookingService {
 
             } else if (BookingStatus.COMPLETED.equals(bookingStatus)) {
                 booking.setBookingStatus(bookingStatus);
+                paymentService.updatePayment(booking);
             }
             return getBookingDto(bookingRepository.save(booking));
         }).orElseThrow(() -> new ResourceNotFound("Booking not found"));

@@ -20,8 +20,5 @@ public class BookingController {
 
    final private IBookingService bookingService;
 
-    @PostMapping
-    public BookingDto createBooking(@RequestBody BookingRequest  bookingRequest){
-     return bookingService.createBooking(bookingRequest);
-    }
+
 }

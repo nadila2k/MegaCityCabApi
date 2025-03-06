@@ -14,6 +14,7 @@ import com.nadila.MegaCityCab.requests.DriverRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
 import com.nadila.MegaCityCab.service.Image.IImageService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,11 +33,12 @@ public class DriverService implements IDriverService{
     private final IImageService imageService;
     private final PasswordEncoder passwordEncoder;
     private final GetAuthId getAuthId;
+    private final ModelMapper modelMapper;
 
 
 
     @Override
-    public Drivers updateDriver(long id, Drivers drivers, MultipartFile image) {
+    public DriverDto updateDriver(long id, Drivers drivers, MultipartFile image) {
 
         if (image.isEmpty()) {
             return driverRepository.findById(getAuthUserId())
@@ -56,7 +58,7 @@ public class DriverService implements IDriverService{
                         existingDriver.setVehicalNumber(drivers.getVehicalNumber());
                         existingDriver.setVehicleType(drivers.getVehicleType());
 
-                        return driverRepository.save(existingDriver);
+                        return convertToDriverDto(driverRepository.save(existingDriver));
 
                     }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
         }else {
@@ -85,7 +87,7 @@ public class DriverService implements IDriverService{
                         existingDriver.setVehicleType(drivers.getVehicleType());
                         existingDriver.setImageUrl(driverImages.getImageUrl());
                         existingDriver.setImageId(driverImages.getImageId());
-                        return driverRepository.save(existingDriver);
+                        return convertToDriverDto(driverRepository.save(existingDriver));
 
 
                     }).orElseThrow(() ->  new ResourceNotFound("Driver  not found"));
@@ -99,20 +101,20 @@ public class DriverService implements IDriverService{
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            driverRepository.delete(drivers); // Delete driver after image is handled
+            driverRepository.delete(drivers);
         }, () -> {
             throw new ResourceNotFound("Driver not found");
         });
     }
     @Override
-    public List<Drivers> getByFirstName(String firstName) {
-        return Optional.ofNullable(driverRepository.findByFirstName(firstName))
+    public List<DriverDto> getByFirstName(String firstName) {
+        return Optional.of(driverRepository.findByFirstName(firstName).stream().map(this::convertToDriverDto).toList())
                 .orElseThrow(() ->  new ResourceNotFound("Driver not found"));
     }
 
     @Override
-    public List<Drivers> getAllDrivers() {
-        return driverRepository.findAll();
+    public List<DriverDto> getAllDrivers() {
+        return driverRepository.findAll().stream().map(this::convertToDriverDto).toList();
     }
 
     public DriverDto convertToDriverDto(CabUser cabUser, Drivers drivers){
@@ -146,6 +148,10 @@ public class DriverService implements IDriverService{
             throw new ResourceNotFound("Driver not found for user");
         }
 
+    }
+
+    public DriverDto convertToDriverDto( Drivers drivers){
+       return modelMapper.map(drivers,DriverDto.class);
     }
 
 }

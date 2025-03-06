@@ -16,7 +16,7 @@ import com.nadila.MegaCityCab.requests.LoginRequest;
 import com.nadila.MegaCityCab.requests.PassangerRequest;
 import com.nadila.MegaCityCab.response.JwtResponse;
 import com.nadila.MegaCityCab.service.Image.IImageService;
-import com.nadila.MegaCityCab.service.Passenger.IPassangerService;
+import com.nadila.MegaCityCab.service.Passenger.IPassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,13 +38,13 @@ public class LoginService {
     private final DriverRepository driverRepository;
     private final PassengerRepository passengerRepository;
     private final JwtUtil jwtUtil;
-    private final IPassangerService passengerService;
+    private final IPassengerService passengerService;
     private final CabUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VehicaleTypeRepository vehicaleTypeRepository;
     public final IImageService imageService;
 
-    public JwtResponse passengerSignup(PassangerRequest  passangerRequest) {
+    public JwtResponse passengerSignup(PassangerRequest passangerRequest) {
         return Optional.of(passangerRequest)
                 .filter(user -> !userRepository.existsByEmail(user.getEmail()) )
                 .map(passanger -> {

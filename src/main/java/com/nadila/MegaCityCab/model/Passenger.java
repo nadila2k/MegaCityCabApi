@@ -27,4 +27,6 @@ public class Passenger {
 
     @OneToMany(mappedBy = "passenger",cascade = CascadeType.ALL,orphanRemoval = true)
     private List<Booking> bookings;
+
+
 }

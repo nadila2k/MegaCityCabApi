@@ -10,7 +10,7 @@ import java.util.List;
 public interface IBookingService {
 
     BookingDto createBooking(BookingRequest booking);
-    void deleteBooking(Booking booking);
+    void deleteBooking(long id);
     BookingDto pasangerUpdateBooking(Booking booking);
     List<BookingDto> getBookingsByVehicleTypeAndStatus();
     BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus);

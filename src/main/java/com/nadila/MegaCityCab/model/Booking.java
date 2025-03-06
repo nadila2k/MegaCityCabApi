@@ -42,6 +42,9 @@ public class Booking {
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL)
+    private Payment payment;
+
 
     @PrePersist
     @PreUpdate
