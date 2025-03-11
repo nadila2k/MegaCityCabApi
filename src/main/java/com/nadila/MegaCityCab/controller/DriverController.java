@@ -1,6 +1,6 @@
 package com.nadila.MegaCityCab.controller;
 
-import com.nadila.MegaCityCab.dto.DriverDto;
+import com.nadila.MegaCityCab.dto.DriversDto;
 import com.nadila.MegaCityCab.enums.ResponseStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.requests.DriverUpdateRequest;
@@ -26,8 +26,8 @@ public class DriverController {
     public ResponseEntity<ApiResponse>  updateDriver(@RequestPart DriverUpdateRequest driverUpdateRequest,@RequestPart(required = false) MultipartFile image){
 
         try {
-            DriverDto driverDto = driverService.updateDriver(driverUpdateRequest,image);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully updated driver",driverDto));
+            DriversDto driversDto = driverService.updateDriver(driverUpdateRequest,image);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully updated driver", driversDto));
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"Driver not found",e.getMessage()));
         }catch (IOException e){
@@ -55,8 +55,8 @@ public class DriverController {
     @GetMapping("/all/drivers")
     public ResponseEntity<ApiResponse> getAllDrivers(){
         try {
-            List<DriverDto> driverDto = driverService.getAllDrivers();
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully fetched drivers",driverDto));
+            List<DriversDto> driversDto = driverService.getAllDrivers();
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully fetched drivers", driversDto));
         }catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"Driver not found",e.getMessage()));
         }catch (Exception e){
@@ -68,8 +68,8 @@ public class DriverController {
     public ResponseEntity<ApiResponse> getByFirstName(@PathVariable String firstName){
 
         try {
-            List<DriverDto> driverDto = driverService.getByFirstName(firstName);
-            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully fetched driver",driverDto));
+            List<DriversDto> driversDto = driverService.getByFirstName(firstName);
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully fetched driver", driversDto));
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"Driver not found",e.getMessage()));
         }   catch (Exception e){

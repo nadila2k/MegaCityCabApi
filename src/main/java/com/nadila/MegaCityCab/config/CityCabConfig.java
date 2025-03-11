@@ -19,8 +19,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Configuration
@@ -71,6 +73,7 @@ public class CityCabConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
+
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger","api/v1/auth/sign-up/driver","api/v1/vehicle" ).permitAll()
                         .anyRequest().authenticated());
@@ -79,4 +82,20 @@ public class CityCabConfig {
 
         return httpSecurity.build();
     }
+
+
+//    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource() {
+//        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+//        corsConfig.setAllowedOrigins(List.of("http://localhost:5173")); // React app URL
+//        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+//        corsConfig.setAllowCredentials(true); // Important for cookies/tokens
+//
+//        var source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", corsConfig); // Apply CORS to all endpoints
+//        return source;
+//    }
 }

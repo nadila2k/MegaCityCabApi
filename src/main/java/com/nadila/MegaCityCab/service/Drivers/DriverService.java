@@ -1,16 +1,12 @@
 package com.nadila.MegaCityCab.service.Drivers;
 
 import com.nadila.MegaCityCab.InBuildUseObjects.ImagesObj;
-import com.nadila.MegaCityCab.dto.CabUserDto;
-import com.nadila.MegaCityCab.dto.DriverDto;
-import com.nadila.MegaCityCab.exception.AlreadyExistsException;
+import com.nadila.MegaCityCab.dto.DriversDto;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
-import com.nadila.MegaCityCab.model.CabUser;
 import com.nadila.MegaCityCab.model.Drivers;
 import com.nadila.MegaCityCab.repository.CabUserRepository;
 import com.nadila.MegaCityCab.repository.DriverRepository;
 import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
-import com.nadila.MegaCityCab.requests.DriverRequest;
 import com.nadila.MegaCityCab.requests.DriverUpdateRequest;
 import com.nadila.MegaCityCab.service.AuthService.GetAuthId;
 import com.nadila.MegaCityCab.service.Image.IImageService;
@@ -39,7 +35,7 @@ public class DriverService implements IDriverService {
 
 
     @Override
-    public DriverDto updateDriver(DriverUpdateRequest drivers, MultipartFile image) {
+    public DriversDto updateDriver(DriverUpdateRequest drivers, MultipartFile image) {
 
         if (image.isEmpty()) {
             return driverRepository.findById(getAuthUserId())
@@ -117,12 +113,12 @@ public class DriverService implements IDriverService {
     }
 
     @Override
-    public List<DriverDto> getAllDrivers() {
+    public List<DriversDto> getAllDrivers() {
         return driverRepository.findAll().stream().map(this::convertToDriverDto).toList();
     }
 
     @Override
-    public List<DriverDto> getByFirstName(String firstName) {
+    public List<DriversDto> getByFirstName(String firstName) {
         return Optional.of(driverRepository.findByFirstName(firstName).stream().map(this::convertToDriverDto).toList())
                 .orElseThrow(() -> new ResourceNotFound("Driver not found"));
     }
@@ -141,8 +137,8 @@ public class DriverService implements IDriverService {
 
     }
 
-    public DriverDto convertToDriverDto(Drivers drivers) {
-        return modelMapper.map(drivers, DriverDto.class);
+    public DriversDto convertToDriverDto(Drivers drivers) {
+        return modelMapper.map(drivers, DriversDto.class);
     }
 
 }

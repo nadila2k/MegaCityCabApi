@@ -2,7 +2,6 @@ package com.nadila.MegaCityCab.dto;
 
 import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.model.VehicleType;
-import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -19,7 +18,7 @@ public class BookingDto {
     private double totalPrice;
     private BookingStatus bookingStatus;
     private PassengerDto passenger;
-    private DriverDto driver;
+    private DriversDto driver;
     private VehicleType vehicleType;
     private PaymentDto payment;
 }

@@ -2,6 +2,7 @@ package com.nadila.MegaCityCab.service.Booking;
 
 
 import com.nadila.MegaCityCab.dto.BookingDto;
+import com.nadila.MegaCityCab.dto.DriversDto;
 import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.Booking;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.sql.Driver;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -74,6 +76,8 @@ public class BookingService implements IBookingService {
     @Override
     public List<BookingDto> getBookingsByVehicleTypeAndStatus() {
 
+
+
         return Optional.ofNullable(driverRepository.findByCabUserId(getAuthId.getCurrentUserId()))
                 .map(driver -> {
                     List<Booking> bookings = bookingRepository.findByVehicleTypeIdAndBookingStatusIn(
@@ -98,14 +102,18 @@ public class BookingService implements IBookingService {
         return bookingRepository.findById(id).map(booking -> {
             if (BookingStatus.DRIVERCONFIRMED.equals(bookingStatus)) {
                 booking.setBookingStatus(bookingStatus);
-                booking.setDrivers(driverRepository.findByCabUserId(driver.getId()));
+                booking.setDrivers(driver);
                 paymentService.createPayment(booking);
 
             } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId()) ) {
                 booking.setBookingStatus(bookingStatus);
                 booking.setDrivers(null);
 
-            } else if (BookingStatus.COMPLETED.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())){
+            } else if (BookingStatus.ONGOING.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId()) ) {
+                booking.setBookingStatus(bookingStatus);
+
+
+            }else if (BookingStatus.COMPLETED.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())){
                 booking.setBookingStatus(bookingStatus);
                 paymentService.updatePayment(booking);
             }
@@ -128,18 +136,37 @@ public class BookingService implements IBookingService {
             );
     }
 
+//
+//    public List<BookingDto> getAllBooking(){
+//        return bookingRepository.findAll().stream().map(this::getBookingDto)
+//    }
 
 
-
-
-
-
-
-
+    public List<BookingDto> getAllBooking(){
+        return bookingRepository.findAll().stream()
+                .map(this::getBookingDto)  // Convert each Booking to BookingDto
+                .collect(Collectors.toList()); // Use Collectors.toList() instead of toList()
+    }
 
     private BookingDto getBookingDto(Booking booking) {
-        return modelMapper.map(booking, BookingDto.class);
+
+        BookingDto bookingDto = modelMapper.map(booking, BookingDto.class);
+
+        // Manually map the 'driver' field if it's not automatically mapped
+        if (booking.getDrivers() != null) {
+
+            DriversDto driverDto = modelMapper.map(booking.getDrivers(), DriversDto.class);
+
+        } else {
+
+            bookingDto.setDriver(null);
+        }
+
+        return bookingDto;
     }
+
+
+
 
 
 

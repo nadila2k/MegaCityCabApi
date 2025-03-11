@@ -52,6 +52,7 @@ public class BookingController {
     @GetMapping("/get/booking/driver")
     public ResponseEntity<ApiResponse> getBookingsByVehicleTypeAndStatus() {
 
+        System.out.println("getBookingsByVehicleTypeAndStatus");
         try {
             List<BookingDto> bookingDto = bookingService.getBookingsByVehicleTypeAndStatus();
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "booking list", bookingDto));
@@ -62,7 +63,7 @@ public class BookingController {
         }
     }
 
-    @PutMapping("update/{id}/driver")
+    @PutMapping("/update/{id}/driver")
     public ResponseEntity<ApiResponse> driverUpdateBooking(@PathVariable long id,
                                                            @RequestParam BookingStatus bookingStatus) {
 
@@ -88,6 +89,16 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "resource not found", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR, "server error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/get/all")
+    public ResponseEntity<ApiResponse> getAllBookings() {
+        try {
+            List<BookingDto> bookingDtos = bookingService.getAllBooking();
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "booking list", bookingDtos));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 }

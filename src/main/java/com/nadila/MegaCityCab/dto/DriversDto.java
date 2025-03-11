@@ -4,7 +4,7 @@ import com.nadila.MegaCityCab.model.VehicleType;
 import lombok.Data;
 
 @Data
-public class DriverDto {
+public class DriversDto {
     private Long id;
     private String firstName;
     private String lastName;

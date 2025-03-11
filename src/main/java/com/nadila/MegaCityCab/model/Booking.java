@@ -34,7 +34,7 @@ public class Booking {
     @JoinColumn(name = "vehicle_type_id")
     private VehicleType vehicleType;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "driver_Id")
     private Drivers drivers;
 
