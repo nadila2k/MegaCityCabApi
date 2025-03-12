@@ -32,7 +32,7 @@ public class BookingService implements IBookingService {
     private final DriverRepository driverRepository;
     private final ModelMapper modelMapper;
     private final IPaymentService paymentService;
-    private final PaymentRepository  paymentRepository;
+    private final PaymentRepository paymentRepository;
 
 
     @Override
@@ -77,7 +77,6 @@ public class BookingService implements IBookingService {
     public List<BookingDto> getBookingsByVehicleTypeAndStatus() {
 
 
-
         return Optional.ofNullable(driverRepository.findByCabUserId(getAuthId.getCurrentUserId()))
                 .map(driver -> {
                     List<Booking> bookings = bookingRepository.findByVehicleTypeIdAndBookingStatusIn(
@@ -105,15 +104,15 @@ public class BookingService implements IBookingService {
                 booking.setDrivers(driver);
                 paymentService.createPayment(booking);
 
-            } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId()) ) {
+            } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())) {
                 booking.setBookingStatus(bookingStatus);
                 booking.setDrivers(null);
 
-            } else if (BookingStatus.ONGOING.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId()) ) {
+            } else if (BookingStatus.ONGOING.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())) {
                 booking.setBookingStatus(bookingStatus);
 
 
-            }else if (BookingStatus.COMPLETED.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())){
+            } else if (BookingStatus.COMPLETED.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())) {
                 booking.setBookingStatus(bookingStatus);
                 paymentService.updatePayment(booking);
             }
@@ -124,25 +123,24 @@ public class BookingService implements IBookingService {
 
     @Override
     public void deleteBooking(long id) {
-    bookingRepository.findById(id)
-            .ifPresentOrElse(
-                    booking -> {
-                        if(booking.getPayment() != null) {
-                            paymentRepository.deleteById(booking.getPayment().getId());
+        bookingRepository.findById(id)
+                .ifPresentOrElse(
+                        booking -> {
+                            if (booking.getPayment() != null) {
+                                paymentRepository.deleteById(booking.getPayment().getId());
+                            }
+                            bookingRepository.delete(booking);
+                        },
+                        () -> {
+                            throw new ResourceNotFound("Booking delete failed: No valid booking found");
                         }
-                        bookingRepository.delete(booking);
-                    },
-                    () -> { throw new ResourceNotFound("Booking delete failed: No valid booking found");}
-            );
+                );
     }
 
-//
-//    public List<BookingDto> getAllBooking(){
-//        return bookingRepository.findAll().stream().map(this::getBookingDto)
-//    }
 
 
-    public List<BookingDto> getAllBooking(){
+
+    public List<BookingDto> getAllBooking() {
         return bookingRepository.findAll().stream()
                 .map(this::getBookingDto)  // Convert each Booking to BookingDto
                 .collect(Collectors.toList()); // Use Collectors.toList() instead of toList()
@@ -166,8 +164,8 @@ public class BookingService implements IBookingService {
     }
 
 
-
-
-
-
 }
+
+
+
+
