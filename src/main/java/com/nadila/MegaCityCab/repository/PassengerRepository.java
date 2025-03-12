@@ -10,4 +10,6 @@ public interface PassengerRepository extends JpaRepository<Passenger,Long> {
     boolean existsByCabUserId(long id);
 
     Passenger findByCabUserId(Long cabUserId);
+
+
 }
