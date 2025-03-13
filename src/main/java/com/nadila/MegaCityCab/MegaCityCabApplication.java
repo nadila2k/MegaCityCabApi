@@ -8,7 +8,7 @@ public class MegaCityCabApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MegaCityCabApplication.class, args);
-
+		System.out.println("helllo");
 	}
 
 }

@@ -50,7 +50,7 @@ class BookingServiceTest {
         bookingRequest.setDestinationLocation("456 Elm Avenue, Mega City");
         bookingRequest.setTotalDistanceKM(15.5);
         bookingRequest.setPricePerKM(2.5);
-        bookingRequest.setVehicleType(vehicleType);
+        bookingRequest.setVehicleTypeId(1);
 
         try {
             bookingService.createBooking(bookingRequest);
@@ -114,14 +114,18 @@ class BookingServiceTest {
     }
 
     @Test
-    void BookingComplete() throws ParseException {
-
+    void BookingComplete() {
         try {
-            BookingDto bookingDto = bookingService.driverUpdateBooking(1,BookingStatus.COMPLETED);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+            // Simulate the call to the service and assert the expected behavior
+            BookingDto bookingDto = bookingService.driverUpdateBooking(1, BookingStatus.COMPLETED);
 
+            // Optionally, you can add assertions to verify the result of the update
+            assertNotNull(bookingDto); // Example assertion
+
+        } catch (Exception e) {
+            // Catch other exceptions and log the error message
+            fail("Unexpected error occurred: " + e.getMessage());
+        }
     }
     }
 
