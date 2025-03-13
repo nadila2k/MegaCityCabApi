@@ -16,6 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/passenger")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 public class PassengerController {
 
     private final IPassengerService passengerService;

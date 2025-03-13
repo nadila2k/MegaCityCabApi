@@ -25,6 +25,7 @@ import static org.springframework.http.HttpStatus.CONFLICT;
 
 @RestController
 @RequestMapping("${api.prefix}/auth")
+@CrossOrigin(origins = "http://localhost:5173", allowCredentials = "true")
 @RequiredArgsConstructor
 public class AuthController {
 
