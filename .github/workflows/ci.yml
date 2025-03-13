@@ -1,0 +1,52 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        java-version: [21]  # Specify Java version 21
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v3
+        with:
+          java-version: 21
+          distribution: 'adoptopenjdk'  # You can choose another JDK distribution like 'temurin' if needed.
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build with Maven
+        run: mvn clean install -DskipTests=false  # Runs tests during build
+
+      - name: Run tests
+        run: mvn test  # Run the unit tests
+
+      - name: Upload Test Results
+        if: always()  # Upload test results even if they fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: target/test-logs/  # Customize based on your project setup
+
+      - name: Deploy (optional)
+        run: |
+          echo "Deploying your app..."  # Customize if deploying
