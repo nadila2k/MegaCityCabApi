@@ -62,7 +62,7 @@ public class BookingService implements IBookingService {
 
     @Override
     public BookingDto pasangerUpdateBooking(long id, Booking booking) {
-        System.out.println("Booking id: " + id);
+
         return bookingRepository.findById(id).map(existingBooking -> {
             existingBooking.setDate(booking.getDate());
             existingBooking.setBookingStatus(booking.getBookingStatus());
