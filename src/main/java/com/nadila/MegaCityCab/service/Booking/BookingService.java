@@ -38,7 +38,9 @@ public class BookingService implements IBookingService {
     @Override
     public BookingDto createBooking(BookingRequest booking) {
         long userId = getAuthId.getCurrentUserId();
-        return Optional.of(booking).filter(bookingRequest -> passengerRepository.existsByCabUserId(userId) && vehicaleTypeRepository.existsById(booking.getVehicleType().getId())).map(bookingRequest -> {
+
+
+        return Optional.of(booking).filter(bookingRequest -> passengerRepository.existsByCabUserId(userId) && vehicaleTypeRepository.existsById(bookingRequest.getVehicleTypeId())).map(bookingRequest -> {
             Passenger passenger = passengerRepository.findByCabUserId(userId);
 
             Booking bookingObj = new Booking();
@@ -48,7 +50,8 @@ public class BookingService implements IBookingService {
             bookingObj.setTotalDistanceKM(booking.getTotalDistanceKM());
             bookingObj.setBookingStatus(BookingStatus.ACTIVE);
             bookingObj.setPricePerKM(booking.getPricePerKM());
-            bookingObj.setVehicleType(booking.getVehicleType());
+            bookingObj.setVehicleType(vehicaleTypeRepository.findById(booking.getVehicleTypeId())
+                    .orElseThrow(() ->  new ResourceNotFound("VehicleType not found")));
             bookingObj.setDrivers(null);
             bookingObj.setPassenger(passenger);
 
@@ -92,7 +95,9 @@ public class BookingService implements IBookingService {
     @Override
     public BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus) {
 
+
         Drivers driver = driverRepository.findByCabUserId(getAuthId.getCurrentUserId());
+
 
         if (driver == null) {
             throw new ResourceNotFound("Driver not found");

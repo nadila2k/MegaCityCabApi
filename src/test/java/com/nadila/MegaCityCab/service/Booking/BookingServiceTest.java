@@ -1,8 +1,10 @@
 package com.nadila.MegaCityCab.service.Booking;
 
 import com.nadila.MegaCityCab.dto.BookingDto;
+import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.model.Booking;
 import com.nadila.MegaCityCab.model.VehicleType;
+import com.nadila.MegaCityCab.repository.BookingRepository;
 import com.nadila.MegaCityCab.requests.BookingRequest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,7 @@ class BookingServiceTest {
     @Mock
     BookingService bookingService;
     private BookingService b;
+
 
     @Test
     void createBooking() throws ParseException {
@@ -92,8 +95,9 @@ class BookingServiceTest {
         bookingRequest.setDate(bookingDate);
         bookingRequest.setPickupLocation("123 Main Street, Mega City");
         bookingRequest.setDestinationLocation("456 Elm Avenue, Mega City");
-        bookingRequest.setTotalDistanceKM(15.5);
-        bookingRequest.setPricePerKM(2.5);
+        bookingRequest.setTotalDistanceKM(156.5);
+        bookingRequest.setPricePerKM(26.5);
+        bookingRequest.setBookingStatus(BookingStatus.ACTIVE);
         bookingRequest.setVehicleType(vehicleType);
 
         // Call the passenger update method (note: corrected to 'pasangerUpdateBooking')
@@ -108,4 +112,18 @@ class BookingServiceTest {
 
         // Additional checks for the updated booking can be added here if necessary
     }
+
+    @Test
+    void BookingComplete() throws ParseException {
+
+        try {
+            BookingDto bookingDto = bookingService.driverUpdateBooking(1,BookingStatus.COMPLETED);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
     }
+    }
+
+
+

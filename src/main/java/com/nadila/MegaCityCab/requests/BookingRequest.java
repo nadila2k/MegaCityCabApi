@@ -19,6 +19,5 @@ public class BookingRequest {
     private String destinationLocation;
     private double totalDistanceKM;
     private double pricePerKM;
-    private VehicleType vehicleType;
-
+    private long VehicleTypeId;
 }

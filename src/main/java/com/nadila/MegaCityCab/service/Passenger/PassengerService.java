@@ -27,7 +27,8 @@ public class PassengerService implements IPassengerService {
 
     @Override
     public PassengerDto updatePassenger(PassengerUpdateRequest passengerUpdateRequest) {
-        return passengerRepository.findById(getUserId())
+        long id = 1;
+        return passengerRepository.findById(id)
                 .map(exisitingPassenger -> {
                     exisitingPassenger.setFirstName(passengerUpdateRequest.getFirstName());
                     exisitingPassenger.setLastName(passengerUpdateRequest.getLastName());
