@@ -24,7 +24,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: 21
-          distribution: 'adoptopenjdk'  # You can choose another JDK distribution like 'temurin' if needed.
+          distribution: 'adoptopenjdk'
 
       - name: Cache Maven dependencies
         uses: actions/cache@v3
@@ -35,18 +35,22 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests=false  # Runs tests during build
+        run: mvn clean install -DskipTests=false  # Builds and runs tests
 
       - name: Run tests
-        run: mvn test  # Run the unit tests
+        run: mvn test  # Execute unit tests
 
-      - name: Upload Test Results
-        if: always()  # Upload test results even if they fail
+      - name: List files in target directory (Debugging)
+        run: ls -R target/
+
+      - name: Upload Test Results (JUnit XML)
+        if: always()  # Ensures results are uploaded even if tests fail
         uses: actions/upload-artifact@v3
         with:
           name: test-results
-          path: target/test-logs/  # Customize based on your project setup
+          path: target/surefire-reports/  # Path for JUnit test reports
 
       - name: Deploy (optional)
+        if: success()
         run: |
-          echo "Deploying your app..."  # Customize if deploying
+          echo "Deployment Step (Customize this as needed)"
