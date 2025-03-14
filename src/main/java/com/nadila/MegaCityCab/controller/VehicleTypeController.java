@@ -17,8 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("${api.prefix}/vehicle")
+
 public class VehicleTypeController {
 
     public final IVehicalTypeService vehicaleTypeService;
