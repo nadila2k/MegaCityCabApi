@@ -33,13 +33,16 @@ public class PaymentService implements IPaymentService{
 
     @Override
     public PaymentDto updatePayment(Booking booking) {
-        return bookingRepository.findById(booking.getId())
-                .map(existingBooking ->{
-                    Payment payment = new Payment();
-                    payment.setBooking(booking);
-                    payment.setPayementStatus(PaymentStatus.COMPLETED);
-                    return convertToPaymentDto(paymentRepository.save(payment));
-                } ).orElseThrow(() ->  new RuntimeException("Booking not found"));
+        // Find the existing payment using the payment ID from the booking
+        return paymentRepository.findById(booking.getPayment().getId())
+                .map(existingPayment -> {
+                    // Update only the payment status to COMPLETED
+                    existingPayment.setPayementStatus(PaymentStatus.COMPLETED);
+
+                    // Save the updated payment and return the PaymentDto
+                    return convertToPaymentDto(paymentRepository.save(existingPayment));
+                })
+                .orElseThrow(() -> new RuntimeException("Payment not found for the booking"));
     }
 
 
