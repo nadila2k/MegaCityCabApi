@@ -75,7 +75,7 @@ public class CityCabConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger","api/v1/auth/sign-up/driver","api/v1/vehicle/all/vehicles" ).permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger","api/v1/auth/sign-up/driver","api/v1/vehicle" ).permitAll()
                         .anyRequest().authenticated());
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
         httpSecurity.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
