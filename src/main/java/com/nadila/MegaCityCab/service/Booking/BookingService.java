@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.sql.Driver;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -188,6 +187,18 @@ public class BookingService implements IBookingService {
                 })
                 .orElseThrow(() -> new ResourceNotFound("Driver not found"));
     }
+
+    public List<BookingDto> getPassengerBookings() {
+        return Optional.ofNullable(passengerRepository.findByCabUserId(getAuthId.getCurrentUserId()))
+                .map(passenger -> {
+                    // Find bookings for the passenger
+                    return bookingRepository.findByPassengerId(passenger.getId()).stream()
+                            .map(this::getBookingDto)  // Convert each Booking to BookingDto
+                            .collect(Collectors.toList()); // Use Collectors.toList() instead of toList()
+                })
+                .orElseThrow(() -> new ResourceNotFound("Passenger not found"));
+    }
+
 
 
     private BookingDto getBookingDto(Booking booking) {

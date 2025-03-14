@@ -18,4 +18,6 @@ public interface IBookingService {
     List<BookingDto> getBookingsByDriver();
     List<BookingDto> getBookingByStatusOngoingDriver();
     List<BookingDto> getBookingsByStatusCompletedDriver();
+    List<BookingDto> getPassengerBookings();
+
 }

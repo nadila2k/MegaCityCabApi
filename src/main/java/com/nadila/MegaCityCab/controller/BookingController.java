@@ -150,4 +150,23 @@ public class BookingController {
         }
     }
 
+    @GetMapping("/get/bookings/passenger")
+    public ResponseEntity<ApiResponse> getPassengerBookings() {
+        System.out.println("getPassengerBookings");
+        try {
+            // Call the service to get the passenger's bookings
+            List<BookingDto> bookingDtoList = bookingService.getPassengerBookings();
+
+            // Return successful response with the list of passenger bookings
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Passenger booking list", bookingDtoList));
+        } catch (ResourceNotFound e) {
+            // Handle case when no passenger is found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "Passenger not found", e.getMessage()));
+        } catch (Exception e) {
+            // Handle any other errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
+        }
+    }
+
+
 }
