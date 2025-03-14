@@ -3,6 +3,7 @@ package com.nadila.MegaCityCab.requests;
 import com.nadila.MegaCityCab.enums.Roles;
 import com.nadila.MegaCityCab.model.VehicleType;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class DriverRequest {
@@ -15,8 +16,9 @@ public class DriverRequest {
     private String address;
     private String mobileNumber;
     private int licenseNumber;
-    private String vehicaleName;
-    private String vehicalNumber;
+    private String vehicleName;
+    private String vehicleNumber;
     private VehicleType vehicleType;
+    private MultipartFile image;
 
 }

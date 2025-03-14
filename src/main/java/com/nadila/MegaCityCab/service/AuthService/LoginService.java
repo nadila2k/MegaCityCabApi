@@ -73,13 +73,13 @@ public class LoginService {
                 .orElseThrow(() -> new AlreadyExistsException(passangerRequest.getEmail() + " already exists"));
     }
 
-    public JwtResponse driverSignup(DriverRequest driverRequest,  MultipartFile image) {
+    public JwtResponse driverSignup(DriverRequest driverRequest) {
 
 
             return Optional.of(driverRequest)
                     .filter(user ->
                             !userRepository.existsByEmail(driverRequest.getEmail()) &&
-                                    !driverRepository.existsByVehicalNumber(driverRequest.getVehicalNumber()) &&
+                                    !driverRepository.existsByVehicalNumber(driverRequest.getVehicleNumber()) &&
                                     vehicaleTypeRepository.existsByName(driverRequest.getVehicleType().getName())
                     )
                     .map(driverRequest1 -> {
@@ -89,7 +89,7 @@ public class LoginService {
                         cabUser.setRoles(driverRequest.getRoles());
                         return userRepository.save(cabUser);
                     }).map(cabUser -> {
-                        ImagesObj images = imageService.uploadImage(image);
+                        ImagesObj images = imageService.uploadImage(driverRequest.getImage());
 
                         Drivers drivers = new Drivers();
 
@@ -98,8 +98,8 @@ public class LoginService {
                         drivers.setAddress(driverRequest.getAddress());
                         drivers.setMobileNumber(driverRequest.getMobileNumber());
                         drivers.setLicenseNumber(driverRequest.getLicenseNumber());
-                        drivers.setVehicaleName(driverRequest.getVehicaleName());
-                        drivers.setVehicalNumber(driverRequest.getVehicalNumber());
+                        drivers.setVehicaleName(driverRequest.getVehicleName());
+                        drivers.setVehicalNumber(driverRequest.getVehicleNumber());
                         drivers.setImageUrl(images.getImageUrl());
                         drivers.setImageId(images.getImageId());
                         drivers.setVehicleType(driverRequest.getVehicleType());
