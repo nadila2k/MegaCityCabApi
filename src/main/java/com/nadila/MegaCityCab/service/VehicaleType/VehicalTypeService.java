@@ -5,7 +5,8 @@ import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.VehicleType;
 import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
-import com.nadila.MegaCityCab.requests.VehicaleTypeRequest;
+
+import com.nadila.MegaCityCab.requests.VehicleTypeRequest;
 import com.nadila.MegaCityCab.service.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,26 +24,42 @@ public class VehicalTypeService implements IVehicalTypeService {
     private final ImageService imageService;
 
 
-    @Override
-    public VehicleType createVehicalType(VehicaleTypeRequest vehicaleTypeRequest, MultipartFile image) {
-        return Optional.of(vehicaleTypeRequest)
-                .filter( vehicleType1 -> !vehicaleTypeRepository.existsByName(vehicaleTypeRequest.getName()))
-                .map(vehicaleTypeRequest1 -> {
 
+    public VehicleType createVehicleType(VehicleTypeRequest vehicleTypeRequest)  {
+        if (vehicaleTypeRepository.existsByName(vehicleTypeRequest.getName())) {
+            throw new AlreadyExistsException("Vehicle type '" + vehicleTypeRequest.getName() + "' already exists.");
+        }
 
-                    ImagesObj imagesObj = imageService.uploadImage(image);
-                    VehicleType vehicleType = new VehicleType();
+        ImagesObj imagesObj = imageService.uploadImage(vehicleTypeRequest.getImage());
+        VehicleType vehicleType = new VehicleType();
+        vehicleType.setName(vehicleTypeRequest.getName());
+        vehicleType.setPrice(vehicleTypeRequest.getPrice());
+        vehicleType.setImageId(imagesObj.getImageId());
+        vehicleType.setImageUrl(imagesObj.getImageUrl());
 
-                    vehicleType.setName(vehicaleTypeRequest.getName());
-                    vehicleType.setPrice(vehicaleTypeRequest.getPrice());
-                    vehicleType.setImageId(imagesObj.getImageId());
-                    vehicleType.setImageUrl(imagesObj.getImageUrl());
-
-                    return vehicaleTypeRepository.save(vehicleType);
-
-                })
-                .orElseThrow(() -> new AlreadyExistsException("Vehicle type '" + vehicaleTypeRequest.getName() + "' already exists."));
+        return vehicaleTypeRepository.save(vehicleType);
     }
+
+//    @Override
+//    public VehicleType createVehicalType(VehicaleTypeRequest vehicaleTypeRequest, MultipartFile image) {
+//        return Optional.of(vehicaleTypeRequest)
+//                .filter( vehicleType1 -> !vehicaleTypeRepository.existsByName(vehicaleTypeRequest.getName()))
+//                .map(vehicaleTypeRequest1 -> {
+//
+//
+//                    ImagesObj imagesObj = imageService.uploadImage(image);
+//                    VehicleType vehicleType = new VehicleType();
+//
+//                    vehicleType.setName(vehicaleTypeRequest.getName());
+//                    vehicleType.setPrice(vehicaleTypeRequest.getPrice());
+//                    vehicleType.setImageId(imagesObj.getImageId());
+//                    vehicleType.setImageUrl(imagesObj.getImageUrl());
+//
+//                    return vehicaleTypeRepository.save(vehicleType);
+//
+//                })
+//                .orElseThrow(() -> new AlreadyExistsException("Vehicle type '" + vehicaleTypeRequest.getName() + "' already exists."));
+//    }
 
     @Override
     public VehicleType updateVehicalType(long id, VehicleType vehicleType,  MultipartFile image) {

@@ -4,7 +4,8 @@ import com.nadila.MegaCityCab.enums.ResponseStatus;
 import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.VehicleType;
-import com.nadila.MegaCityCab.requests.VehicaleTypeRequest;
+
+import com.nadila.MegaCityCab.requests.VehicleTypeRequest;
 import com.nadila.MegaCityCab.response.ApiResponse;
 import com.nadila.MegaCityCab.service.VehicaleType.IVehicalTypeService;
 import io.jsonwebtoken.io.IOException;
@@ -27,20 +28,36 @@ public class VehicleTypeController {
 
 
     @PostMapping("/create")
-    public  ResponseEntity<ApiResponse> addVehicaleType(@RequestPart VehicaleTypeRequest  vehicaleTypeRequest, @RequestPart MultipartFile image) {
-        try{
-            VehicleType vehicleType = vehicaleTypeService.createVehicalType(vehicaleTypeRequest, image);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(ResponseStatus.SUCCESS,"Vehicale Type Add Success",vehicleType));
-        }catch(AlreadyExistsException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"already exists",e.getMessage()));
-        }catch (IOException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"Image upload fail ",e.getMessage()));
-        }
-        catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,e.getMessage(),"Server error"));
+    public ResponseEntity<ApiResponse> addVehicleType(@ModelAttribute VehicleTypeRequest vehicleTypeRequest) {
+        try {
+            VehicleType vehicleType = vehicaleTypeService.createVehicleType(vehicleTypeRequest);
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(new ApiResponse(ResponseStatus.SUCCESS, "Vehicle Type Added Successfully", vehicleType));
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new ApiResponse(ResponseStatus.FAILURE, "Vehicle type already exists", e.getMessage()));
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(ResponseStatus.ERROR, "Image upload failed", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
         }
     }
+//    public  ResponseEntity<ApiResponse> addVehicaleType(@RequestPart VehicaleTypeRequest  vehicaleTypeRequest, @RequestPart MultipartFile image) {
+//        try{
+//            VehicleType vehicleType = vehicaleTypeService.createVehicalType(vehicaleTypeRequest, image);
+//
+//            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(ResponseStatus.SUCCESS,"Vehicale Type Add Success",vehicleType));
+//        }catch(AlreadyExistsException e){
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"already exists",e.getMessage()));
+//        }catch (IOException e){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"Image upload fail ",e.getMessage()));
+//        }
+//        catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,e.getMessage(),"Server error"));
+//        }
+//    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateVehicaleType(@PathVariable long id, @RequestPart VehicleType vehicleType, @RequestPart(required = false) MultipartFile image) {
