@@ -5,6 +5,7 @@ import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.VehicleType;
 
+import com.nadila.MegaCityCab.requests.VehicaleUpdateRequest;
 import com.nadila.MegaCityCab.requests.VehicleTypeRequest;
 import com.nadila.MegaCityCab.response.ApiResponse;
 import com.nadila.MegaCityCab.service.VehicaleType.IVehicalTypeService;
@@ -60,10 +61,10 @@ public class VehicleTypeController {
 //    }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<ApiResponse> updateVehicaleType(@PathVariable long id, @RequestPart VehicleType vehicleType, @RequestPart(required = false) MultipartFile image) {
+    public ResponseEntity<ApiResponse> updateVehicaleType(@PathVariable long id, @ModelAttribute VehicaleUpdateRequest vehicleType ) {
 
         try {
-            VehicleType updateVehicalType = vehicaleTypeService.updateVehicalType(id, vehicleType, image);
+            VehicleType updateVehicalType = vehicaleTypeService.updateVehicalType(id, vehicleType);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Vehicale Type Update Success",updateVehicalType));
         } catch (ResourceNotFound e) {
@@ -75,6 +76,7 @@ public class VehicleTypeController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"Server error",e.getMessage()));
         }
     }
+
 
 
     @GetMapping("/all/vehicles")
