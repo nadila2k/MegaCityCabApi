@@ -152,6 +152,17 @@ public class BookingService implements IBookingService {
                 .collect(Collectors.toList()); // Use Collectors.toList() instead of toList()
     }
 
+    @Override
+    public List<BookingDto> getBookingsByDriver() {
+
+        return  Optional.ofNullable(driverRepository.findByCabUserId(getAuthId.getCurrentUserId()))
+                .map(drivers -> {
+                    return bookingRepository.findByDriversId(drivers.getId()).stream()
+                            .map(this::getBookingDto)  // Convert each Booking to BookingDto
+                            .collect(Collectors.toList()); // Use Collectors.toList() instead of toList()
+                }).orElseThrow(() ->  new ResourceNotFound("Driver not found"));
+    }
+
     private BookingDto getBookingDto(Booking booking) {
 
         BookingDto bookingDto = modelMapper.map(booking, BookingDto.class);

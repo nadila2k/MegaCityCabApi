@@ -1,6 +1,7 @@
 package com.nadila.MegaCityCab.controller;
 
 import com.nadila.MegaCityCab.dto.BookingDto;
+import com.nadila.MegaCityCab.dto.DriversDto;
 import com.nadila.MegaCityCab.enums.BookingStatus;
 import com.nadila.MegaCityCab.enums.ResponseStatus;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
@@ -99,6 +100,17 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "booking list", bookingDtos));
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("get/driver/booking")
+    public ResponseEntity<ApiResponse> getBookingByDriverId() {
+
+        try {
+            List<BookingDto>  bookingDtos = bookingService.getBookingsByDriver();
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "booking list", bookingDtos));
+        } catch (ResourceNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "resource not found", e.getMessage()));
         }
     }
 }
