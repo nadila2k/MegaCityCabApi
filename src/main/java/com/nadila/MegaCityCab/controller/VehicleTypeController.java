@@ -42,7 +42,7 @@ public class VehicleTypeController {
         }
     }
 
-    @PutMapping("update/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateVehicaleType(@PathVariable long id, @RequestPart VehicleType vehicleType, @RequestPart(required = false) MultipartFile image) {
 
         try {

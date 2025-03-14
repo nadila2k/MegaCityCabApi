@@ -25,7 +25,7 @@
     import static org.springframework.http.HttpStatus.CONFLICT;
 
     @RestController
-    @CrossOrigin
+
     @RequestMapping("${api.prefix}/auth")
     @RequiredArgsConstructor
     public class AuthController {

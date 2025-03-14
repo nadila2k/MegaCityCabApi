@@ -3,6 +3,7 @@ package com.nadila.MegaCityCab.config;
 import com.cloudinary.Cloudinary;
 import com.nadila.MegaCityCab.config.jwt.AuthTokenFilter;
 import com.nadila.MegaCityCab.service.AuthService.CabUserDetailsService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -17,9 +18,12 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,15 +76,35 @@ public class CityCabConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf(AbstractHttpConfigurer::disable)
-
+        httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
+                // Added: Enable CORS by linking to the corsConfigurationSource bean
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger","api/v1/auth/sign-up/driver","api/v1/vehicle" ).permitAll()
-                        .anyRequest().authenticated());
+                .authorizeHttpRequests(auth -> auth
+                        // Modified: Removed "/api/v1/vehicle/all/vehicles" from permitAll to require authentication
+                        .requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger", "api/v1/auth/sign-up/driver").permitAll()
+                        .anyRequest().authenticated()); // All other endpoints, including /api/v1/vehicle/all/vehicles, now require authentication
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
         httpSecurity.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-
         return httpSecurity.build();
+    }
+    // Added: Define CORS configuration to allow frontend requests from http://localhost:5173
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        var corsConfig = new CorsConfiguration();
+        // Added: Allow requests from your React frontend
+        corsConfig.setAllowedOrigins(List.of("http://localhost:5173")); // React app URL
+        // Added: Allow all standard HTTP methods
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        // Added: Allow all headers, including Authorization for JWT
+        corsConfig.setAllowedHeaders(List.of("*")); // Changed from specific headers to wildcard for flexibility
+        // Added: Allow credentials (e.g., cookies or tokens) to be sent
+        corsConfig.setAllowCredentials(true); // Important for authenticated requests
+        var source = new UrlBasedCorsConfigurationSource();
+        // Added: Apply this CORS config to all endpoints
+        source.registerCorsConfiguration("/**", corsConfig); // Apply CORS to all paths
+        return source;
     }
 
 
