@@ -6,10 +6,7 @@ import com.nadila.MegaCityCab.config.jwt.JwtUtil;
 import com.nadila.MegaCityCab.enums.Roles;
 import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
-import com.nadila.MegaCityCab.model.Admin;
-import com.nadila.MegaCityCab.model.CabUser;
-import com.nadila.MegaCityCab.model.Drivers;
-import com.nadila.MegaCityCab.model.Passenger;
+import com.nadila.MegaCityCab.model.*;
 import com.nadila.MegaCityCab.repository.*;
 import com.nadila.MegaCityCab.requests.DriverRequest;
 import com.nadila.MegaCityCab.requests.LoginRequest;
@@ -73,45 +70,45 @@ public class LoginService {
                 .orElseThrow(() -> new AlreadyExistsException(passangerRequest.getEmail() + " already exists"));
     }
 
-    public JwtResponse driverSignup(DriverRequest driverRequest,  MultipartFile image) {
+    public JwtResponse driverSignup(DriverRequest driverRequest) {
 
+        VehicleType vehicleType = vehicaleTypeRepository.findById(driverRequest.getVehicleTypeId())
+                .orElseThrow(() ->  new ResourceNotFound("VehicleType not found"));
+        return Optional.of(driverRequest)
+                .filter(user ->
+                        !userRepository.existsByEmail(driverRequest.getEmail()) &&
+                                !driverRepository.existsByVehicalNumber(driverRequest.getVehicleNumber())
+                )
+                .map(driverRequest1 -> {
+                    CabUser cabUser = new CabUser();
+                    cabUser.setEmail(driverRequest.getEmail());
+                    cabUser.setPassword(passwordEncoder.encode(driverRequest.getPassword()));
+                    cabUser.setRoles(driverRequest.getRoles());
+                    return userRepository.save(cabUser);
+                }).map(cabUser -> {
+                    ImagesObj images = imageService.uploadImage(driverRequest.getImage());
 
-            return Optional.of(driverRequest)
-                    .filter(user ->
-                            !userRepository.existsByEmail(driverRequest.getEmail()) &&
-                                    !driverRepository.existsByVehicalNumber(driverRequest.getVehicalNumber()) &&
-                                    vehicaleTypeRepository.existsByName(driverRequest.getVehicleType().getName())
-                    )
-                    .map(driverRequest1 -> {
-                        CabUser cabUser = new CabUser();
-                        cabUser.setEmail(driverRequest.getEmail());
-                        cabUser.setPassword(passwordEncoder.encode(driverRequest.getPassword()));
-                        cabUser.setRoles(driverRequest.getRoles());
-                        return userRepository.save(cabUser);
-                    }).map(cabUser -> {
-                        ImagesObj images = imageService.uploadImage(image);
+                    Drivers drivers = new Drivers();
 
-                        Drivers drivers = new Drivers();
+                    drivers.setFirstName(driverRequest.getFirstName());
+                    drivers.setLastName(driverRequest.getLastName());
+                    drivers.setAddress(driverRequest.getAddress());
+                    drivers.setMobileNumber(driverRequest.getMobileNumber());
+                    drivers.setLicenseNumber(driverRequest.getLicenseNumber());
+                    drivers.setVehicaleName(driverRequest.getVehicleName());
+                    drivers.setVehicalNumber(driverRequest.getVehicleNumber());
+                    drivers.setImageUrl(images.getImageUrl());
+                    drivers.setImageId(images.getImageId());
+                    drivers.setVehicleType(vehicleType);
+                    drivers.setCabUser(cabUser);
+                    driverRepository.save(drivers);
 
-                        drivers.setFirstName(driverRequest.getFirstName());
-                        drivers.setLastName(driverRequest.getLastName());
-                        drivers.setAddress(driverRequest.getAddress());
-                        drivers.setMobileNumber(driverRequest.getMobileNumber());
-                        drivers.setLicenseNumber(driverRequest.getLicenseNumber());
-                        drivers.setVehicaleName(driverRequest.getVehicaleName());
-                        drivers.setVehicalNumber(driverRequest.getVehicalNumber());
-                        drivers.setImageUrl(images.getImageUrl());
-                        drivers.setImageId(images.getImageId());
-                        drivers.setVehicleType(driverRequest.getVehicleType());
-                        drivers.setCabUser(cabUser);
-                        driverRepository.save(drivers);
+                    LoginRequest loginRequest = new LoginRequest();
+                    loginRequest.setEmail(driverRequest.getEmail());
+                    loginRequest.setPassword(driverRequest.getPassword());
 
-                        LoginRequest loginRequest = new LoginRequest();
-                        loginRequest.setEmail(driverRequest.getEmail());
-                        loginRequest.setPassword(driverRequest.getPassword());
-
-                        return signin(loginRequest);
-                    }).orElseThrow(() -> new AlreadyExistsException("Email or Vehicle number already exists"));
+                    return signin(loginRequest);
+                }).orElseThrow(() -> new AlreadyExistsException("Email or Vehicle number already exists"));
 
     }
 

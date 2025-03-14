@@ -2,6 +2,7 @@ package com.nadila.MegaCityCab.service.Drivers;
 
 import com.nadila.MegaCityCab.InBuildUseObjects.ImagesObj;
 import com.nadila.MegaCityCab.dto.DriversDto;
+import com.nadila.MegaCityCab.exception.ImageProcessingException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.Drivers;
 import com.nadila.MegaCityCab.repository.CabUserRepository;
@@ -35,61 +36,57 @@ public class DriverService implements IDriverService {
 
 
     @Override
-    public DriversDto updateDriver(DriverUpdateRequest drivers, MultipartFile image) {
+    public DriversDto updateDriver(DriverUpdateRequest drivers) {
 
-        if (image.isEmpty()) {
-            return driverRepository.findById(getAuthUserId())
-                    .map(existingDriver -> {
-                        if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
-                            boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
-                            if (exists) {
-                                throw new IllegalArgumentException("Vehicle number already exists");
-                            }
+        return driverRepository.findById(getAuthUserId())
+                .map(existingDriver -> {
+
+                    // Vehicle number validation check
+                    if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
+                        boolean isVehicleNumberTaken = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
+                        if (isVehicleNumberTaken) {
+                            throw new IllegalArgumentException("Vehicle number already exists");
                         }
-                        existingDriver.setFirstName(drivers.getFirstName());
-                        existingDriver.setLastName(drivers.getLastName());
-                        existingDriver.setAddress(drivers.getAddress());
-                        existingDriver.setMobileNumber(drivers.getMobileNumber());
-                        existingDriver.setLicenseNumber(drivers.getLicenseNumber());
-                        existingDriver.setVehicaleName(drivers.getVehicaleName());
-                        existingDriver.setVehicalNumber(drivers.getVehicalNumber());
-                        existingDriver.setVehicleType(drivers.getVehicleType());
+                    }
 
-                        return convertToDriverDto(driverRepository.save(existingDriver));
+                    // Update driver details
+                    existingDriver.setFirstName(drivers.getFirstName());
+                    existingDriver.setLastName(drivers.getLastName());
+                    existingDriver.setAddress(drivers.getAddress());
+                    existingDriver.setMobileNumber(drivers.getMobileNumber());
+                    existingDriver.setLicenseNumber(drivers.getLicenseNumber());
+                    existingDriver.setVehicaleName(drivers.getVehicaleName());
+                    existingDriver.setVehicalNumber(drivers.getVehicalNumber());
 
-                    }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
-        } else {
-            return driverRepository.findById(getAuthUserId())
-                    .map(existingDriver -> {
-                        if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
-                            Boolean exists = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
-                            if (exists) {
-                                throw new IllegalArgumentException("Vehicle number already exists");
-                            }
-                        }
+                    // Set vehicle type, ensuring the vehicle type exists
+                    existingDriver.setVehicleType(vehicaleTypeRepository.findById(drivers.getVehicleTypeId())
+                            .orElseThrow(() -> new ResourceNotFound("Vehicle type not found")));
+
+                    // Handle image if provided
+                    if (!drivers.getImage().isEmpty()) {
                         try {
+                            // Delete the old image if exists
                             imageService.deleteImage(drivers.getImageId());
+
+                            // Upload the new image
+                            ImagesObj driverImages = imageService.uploadImage(drivers.getImage());
+
+                            // Set the new image URL and ID on the existing driver
+                            existingDriver.setImageUrl(driverImages.getImageUrl());
+                            existingDriver.setImageId(driverImages.getImageId());
+
                         } catch (IOException e) {
-                            throw new RuntimeException(e);
+                            // Rethrow the IOException as a RuntimeException (unchecked exception)
+                            throw new RuntimeException("Error processing image", e);
                         }
-                        ImagesObj driverImages = imageService.uploadImage(image);
+                    }
 
-                        existingDriver.setFirstName(drivers.getFirstName());
-                        existingDriver.setLastName(drivers.getLastName());
-                        existingDriver.setAddress(drivers.getAddress());
-                        existingDriver.setMobileNumber(drivers.getMobileNumber());
-                        existingDriver.setLicenseNumber(drivers.getLicenseNumber());
-                        existingDriver.setVehicaleName(drivers.getVehicaleName());
-                        existingDriver.setVehicalNumber(drivers.getVehicalNumber());
-                        existingDriver.setVehicleType(drivers.getVehicleType());
-                        existingDriver.setImageUrl(driverImages.getImageUrl());
-                        existingDriver.setImageId(driverImages.getImageId());
-                        return convertToDriverDto(driverRepository.save(existingDriver));
+                    // Save and return updated driver as DTO
+                    return convertToDriverDto(driverRepository.save(existingDriver));
 
-
-                    }).orElseThrow(() -> new ResourceNotFound("Driver  not found"));
-        }
+                }).orElseThrow(() -> new ResourceNotFound("Driver not found"));
     }
+
 
     @Override
     public void deleteDriver(String email, String password) {
