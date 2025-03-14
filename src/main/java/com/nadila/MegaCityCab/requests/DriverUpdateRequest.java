@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -20,5 +21,6 @@ public class DriverUpdateRequest {
     private String vehicalNumber;
     private String imageUrl;
     private String imageId;
+    private MultipartFile image;
     private VehicleType vehicleType;
 }

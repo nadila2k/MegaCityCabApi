@@ -23,10 +23,10 @@ public class DriverController {
     private final IDriverService driverService;
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse>  updateDriver(@RequestPart DriverUpdateRequest driverUpdateRequest,@RequestPart(required = false) MultipartFile image){
+    public ResponseEntity<ApiResponse>  updateDriver(@RequestPart DriverUpdateRequest driverUpdateRequest){
 
         try {
-            DriversDto driversDto = driverService.updateDriver(driverUpdateRequest,image);
+            DriversDto driversDto = driverService.updateDriver(driverUpdateRequest);
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"Successfully updated driver", driversDto));
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"Driver not found",e.getMessage()));

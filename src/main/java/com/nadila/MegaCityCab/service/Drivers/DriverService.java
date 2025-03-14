@@ -35,9 +35,9 @@ public class DriverService implements IDriverService {
 
 
     @Override
-    public DriversDto updateDriver(DriverUpdateRequest drivers, MultipartFile image) {
+    public DriversDto updateDriver(DriverUpdateRequest drivers) {
 
-        if (image.isEmpty()) {
+        if (drivers.getImage().isEmpty()) {
             return driverRepository.findById(getAuthUserId())
                     .map(existingDriver -> {
                         if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
@@ -72,7 +72,7 @@ public class DriverService implements IDriverService {
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-                        ImagesObj driverImages = imageService.uploadImage(image);
+                        ImagesObj driverImages = imageService.uploadImage(drivers.getImage());
 
                         existingDriver.setFirstName(drivers.getFirstName());
                         existingDriver.setLastName(drivers.getLastName());
