@@ -111,9 +111,9 @@ public class BookingService implements IBookingService {
                 paymentService.createPayment(booking);
 
             } else if (BookingStatus.CANCELLEDBYDRIVER.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())) {
-                booking.setBookingStatus(bookingStatus);
+                booking.setBookingStatus(BookingStatus.ACTIVE);
                 booking.setDrivers(null);
-
+                paymentRepository.deleteById(booking.getPayment().getId());
             } else if (BookingStatus.ONGOING.equals(bookingStatus) && booking.getDrivers().getId().equals(driver.getId())) {
                 booking.setBookingStatus(bookingStatus);
 
@@ -163,6 +163,33 @@ public class BookingService implements IBookingService {
                 }).orElseThrow(() ->  new ResourceNotFound("Driver not found"));
     }
 
+    @Override
+    public List<BookingDto> getBookingByStatusOngoingDriver() {
+        return Optional.ofNullable(driverRepository.findByCabUserId(getAuthId.getCurrentUserId()))
+                .map(driver -> {
+                    // Fetch bookings with ONGOING status
+                    List<Booking> bookings = bookingRepository.findByBookingStatus(BookingStatus.ONGOING);
+
+                    // Convert to BookingDto and return the list
+                    return bookings.stream().map(this::getBookingDto).toList();
+                })
+                .orElseThrow(() -> new ResourceNotFound("Driver not found"));
+    }
+
+    @Override
+    public List<BookingDto> getBookingsByStatusCompletedDriver() {
+        return Optional.ofNullable(driverRepository.findByCabUserId(getAuthId.getCurrentUserId()))
+                .map(driver -> {
+                    // Fetch bookings with COMPLETED status
+                    List<Booking> bookings = bookingRepository.findByBookingStatus(BookingStatus.COMPLETED);
+
+                    // Convert to BookingDto and return the list
+                    return bookings.stream().map(this::getBookingDto).toList();
+                })
+                .orElseThrow(() -> new ResourceNotFound("Driver not found"));
+    }
+
+
     private BookingDto getBookingDto(Booking booking) {
 
         BookingDto bookingDto = modelMapper.map(booking, BookingDto.class);
@@ -179,6 +206,8 @@ public class BookingService implements IBookingService {
 
         return bookingDto;
     }
+
+
 
 
 }

@@ -113,4 +113,41 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "resource not found", e.getMessage()));
         }
     }
+
+    @GetMapping("/get/booking/driver/ongoing")
+    public ResponseEntity<ApiResponse> getBookingByStatusOngoingDriver() {
+        System.out.println("getBookingByStatusOngoingDriver");
+        try {
+            // Call the service to get ongoing bookings
+            List<BookingDto> bookingDtos = bookingService.getBookingByStatusOngoingDriver();
+
+            // Return successful response with ongoing bookings
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Ongoing booking list", bookingDtos));
+        } catch (ResourceNotFound e) {
+            // Handle driver not found error
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "Driver not found", e.getMessage()));
+        } catch (Exception e) {
+            // Handle any other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/get/booking/driver/completed")
+    public ResponseEntity<ApiResponse> getBookingsByStatusCompletedDriver() {
+        System.out.println("getBookingsByStatusCompletedDriver");
+        try {
+            // Call the service to get completed bookings
+            List<BookingDto> bookingDtoList = bookingService.getBookingsByStatusCompletedDriver();
+
+            // Return successful response with completed bookings
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS, "Completed booking list", bookingDtoList));
+        } catch (ResourceNotFound e) {
+            // Handle driver not found error
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE, "Driver not found", e.getMessage()));
+        } catch (Exception e) {
+            // Handle any other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR, "Server error", e.getMessage()));
+        }
+    }
+
 }

@@ -16,4 +16,6 @@ public interface IBookingService {
     BookingDto driverUpdateBooking(long id, BookingStatus bookingStatus);
     List<BookingDto> getAllBooking();
     List<BookingDto> getBookingsByDriver();
+    List<BookingDto> getBookingByStatusOngoingDriver();
+    List<BookingDto> getBookingsByStatusCompletedDriver();
 }
