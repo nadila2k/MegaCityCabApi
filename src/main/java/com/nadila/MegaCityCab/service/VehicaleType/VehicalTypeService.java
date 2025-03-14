@@ -6,6 +6,7 @@ import com.nadila.MegaCityCab.exception.ResourceNotFound;
 import com.nadila.MegaCityCab.model.VehicleType;
 import com.nadila.MegaCityCab.repository.VehicaleTypeRepository;
 
+import com.nadila.MegaCityCab.requests.VehicaleUpdateRequest;
 import com.nadila.MegaCityCab.requests.VehicleTypeRequest;
 import com.nadila.MegaCityCab.service.Image.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -62,9 +63,9 @@ public class VehicalTypeService implements IVehicalTypeService {
 //    }
 
     @Override
-    public VehicleType updateVehicalType(long id, VehicleType vehicleType,  MultipartFile image) {
+    public VehicleType updateVehicalType(long id, VehicaleUpdateRequest  vehicleType) {
 
-        if (image.isEmpty()) {
+        if (vehicleType.getImage().isEmpty()) {
             return vehicaleTypeRepository.findById(id)
                     .map(existingType -> {
                         existingType.setName(vehicleType.getName());
@@ -76,7 +77,7 @@ public class VehicalTypeService implements IVehicalTypeService {
                     .map(existingtype -> {
                         try {
                             imageService.deleteImage(existingtype.getImageId());
-                            ImagesObj imagesObj = imageService.uploadImage(image);
+                            ImagesObj imagesObj = imageService.uploadImage(vehicleType.getImage());
                             existingtype.setImageUrl(imagesObj.getImageUrl());
                             existingtype.setImageId(imagesObj.getImageId());
                             existingtype.setName(vehicleType.getName());
