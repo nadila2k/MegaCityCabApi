@@ -70,7 +70,7 @@ public class CityCabConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         // Modified: Removed "/api/v1/vehicle/all/vehicles" from permitAll to require authentication
-                        .requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger", "api/v1/auth/sign-up/driver").permitAll()
+                        .requestMatchers("api/v1/auth/sign-in", "api/v1/auth/sign-up/passenger", "api/v1/auth/sign-up/driver", "api/v1/vehicle/all/vehicles/public").permitAll()
                         .anyRequest().authenticated()); // All other endpoints, including /api/v1/vehicle/all/vehicles, now require authentication
         httpSecurity.authenticationProvider(daoAuthenticationProvider());
         httpSecurity.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);

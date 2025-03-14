@@ -92,6 +92,19 @@ public class VehicleTypeController {
         }
     }
 
+    @GetMapping("/all/vehicles/public")
+    public ResponseEntity<ApiResponse> getAllVehicleTypePublic() {
+        try{
+            List<VehicleType> vehicleTypes = vehicaleTypeService.getAllVehicalType();
+
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(ResponseStatus.SUCCESS,"success",vehicleTypes ));
+        }catch(ResourceNotFound e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(ResponseStatus.FAILURE,"not found",e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(ResponseStatus.ERROR,"server error",e.getMessage()));
+        }
+    }
+
     @DeleteMapping("/delete/{id}")
     public  ResponseEntity<ApiResponse> deleteVehicaleType(@PathVariable long id) {
 
