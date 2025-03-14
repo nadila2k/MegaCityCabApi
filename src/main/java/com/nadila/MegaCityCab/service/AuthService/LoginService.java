@@ -6,10 +6,7 @@ import com.nadila.MegaCityCab.config.jwt.JwtUtil;
 import com.nadila.MegaCityCab.enums.Roles;
 import com.nadila.MegaCityCab.exception.AlreadyExistsException;
 import com.nadila.MegaCityCab.exception.ResourceNotFound;
-import com.nadila.MegaCityCab.model.Admin;
-import com.nadila.MegaCityCab.model.CabUser;
-import com.nadila.MegaCityCab.model.Drivers;
-import com.nadila.MegaCityCab.model.Passenger;
+import com.nadila.MegaCityCab.model.*;
 import com.nadila.MegaCityCab.repository.*;
 import com.nadila.MegaCityCab.requests.DriverRequest;
 import com.nadila.MegaCityCab.requests.LoginRequest;
@@ -75,12 +72,12 @@ public class LoginService {
 
     public JwtResponse driverSignup(DriverRequest driverRequest) {
 
-
+        VehicleType vehicleType = vehicaleTypeRepository.findById(driverRequest.getVehicleTypeId())
+                .orElseThrow(() ->  new ResourceNotFound("VehicleType not found"));
             return Optional.of(driverRequest)
                     .filter(user ->
                             !userRepository.existsByEmail(driverRequest.getEmail()) &&
-                                    !driverRepository.existsByVehicalNumber(driverRequest.getVehicleNumber()) &&
-                                    vehicaleTypeRepository.existsByName(driverRequest.getVehicleType().getName())
+                                    !driverRepository.existsByVehicalNumber(driverRequest.getVehicleNumber())
                     )
                     .map(driverRequest1 -> {
                         CabUser cabUser = new CabUser();
@@ -102,7 +99,7 @@ public class LoginService {
                         drivers.setVehicalNumber(driverRequest.getVehicleNumber());
                         drivers.setImageUrl(images.getImageUrl());
                         drivers.setImageId(images.getImageId());
-                        drivers.setVehicleType(driverRequest.getVehicleType());
+                        drivers.setVehicleType(vehicleType);
                         drivers.setCabUser(cabUser);
                         driverRepository.save(drivers);
 

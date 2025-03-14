@@ -18,7 +18,7 @@ public class DriverRequest {
     private int licenseNumber;
     private String vehicleName;
     private String vehicleNumber;
-    private VehicleType vehicleType;
+    private long vehicleTypeId;
     private MultipartFile image;
 
 }
