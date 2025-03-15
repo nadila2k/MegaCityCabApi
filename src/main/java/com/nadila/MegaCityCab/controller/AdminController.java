@@ -21,7 +21,7 @@ import java.io.IOException;
 public class AdminController {
 
     private final IDriverService driverService;
-    @PostMapping("/update/{driverId}/admin")
+    @PutMapping("/update/{driverId}/driver")
     public ResponseEntity<ApiResponse> updateDriver(
             @PathVariable Long driverId,
             @ModelAttribute DriverUpdateRequest driverUpdateRequest) {
@@ -39,12 +39,12 @@ public class AdminController {
         }
     }
 
-    @DeleteMapping("/delete/{driverId}/admin")
+    @DeleteMapping("/delete/{driverId}/driver")
     public ResponseEntity<ApiResponse> deleteDriver(@PathVariable Long driverId) {
         try {
             driverService.deleteDriverAdmin(driverId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new ApiResponse(ResponseStatus.SUCCESS, "Successfully deleted driver", true));
+                    .body(new ApiResponse(ResponseStatus.SUCCESS, "Successfully deleted driver", "driver has been deleted"));
         } catch (ResourceNotFound e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse(ResponseStatus.FAILURE, "Driver not found", e.getMessage()));
