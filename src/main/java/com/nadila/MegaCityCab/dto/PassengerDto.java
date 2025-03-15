@@ -9,5 +9,4 @@ public class PassengerDto {
     private String lastName;
     private String address;
     private String mobileNumber;
-    private CabUserDto cabUserDto;
 }

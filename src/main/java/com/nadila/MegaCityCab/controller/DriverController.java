@@ -22,7 +22,7 @@ public class DriverController {
 
     private final IDriverService driverService;
 
-    @PostMapping("/update")
+    @PutMapping("/update/driver")
     public ResponseEntity<ApiResponse>  updateDrive( @ModelAttribute DriverUpdateRequest driverUpdateRequest){
 
         try {

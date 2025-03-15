@@ -21,7 +21,7 @@ public class PassengerController {
     private final IPassengerService passengerService;
 
 
-    @PostMapping("/update")
+    @PutMapping("/update/passenger")
     public ResponseEntity<ApiResponse> updatePassenger(@RequestBody PassengerUpdateRequest passangerUpdateRequest) {
 
         try {

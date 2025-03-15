@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PassengerUpdateRequest {
 
-    private long id;
+
     private String firstName;
     private String lastName;
     private String address;
