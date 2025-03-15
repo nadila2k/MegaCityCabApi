@@ -69,6 +69,20 @@ public class PassengerController {
     }
 
 
+    @GetMapping("/me/passenger")
+    public ResponseEntity<ApiResponse> getPassenger() {
+        try {
+            PassengerDto passengerDto = passengerService.getPassenger();  // Call the service method to get passenger
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse(ResponseStatus.SUCCESS, "Passenger found", passengerDto));
+        } catch (ResourceNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(ResponseStatus.FAILURE, "Passenger not found", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(ResponseStatus.ERROR, "Internal server error", e.getMessage()));
+        }
+    }
 
 
 }

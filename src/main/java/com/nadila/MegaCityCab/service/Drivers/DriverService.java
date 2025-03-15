@@ -134,6 +134,81 @@ public class DriverService implements IDriverService {
 
     }
 
+    @Override
+    public void deleteDriverAdmin(Long driverId) {
+        cabUserRepository.deleteById(getAuthId.getCurrentUserId());
+        // Find driver by ID
+        Drivers driver = driverRepository.findById(driverId)
+                .orElseThrow(() -> new ResourceNotFound("Driver not found with ID: " + driverId));
+
+
+        // Delete driver from database
+        driverRepository.delete(driver);
+    }
+
+    @Override
+    public DriversDto getDriver() {
+        return driverRepository.findById(getAuthUserId())
+                .map(this::convertToDriverDto)
+                .orElseThrow(() -> new ResourceNotFound("Driver not found"));
+    }
+
+    @Override
+    public DriversDto updateDriverAdmin(Long driverId, DriverUpdateRequest drivers) {
+
+        return driverRepository.findById(driverId)
+                .map(existingDriver -> {
+
+                    // Vehicle number validation check
+                    if (!existingDriver.getVehicalNumber().equals(drivers.getVehicalNumber())) {
+                        boolean isVehicleNumberTaken = driverRepository.existsByVehicalNumber(drivers.getVehicalNumber());
+                        if (isVehicleNumberTaken) {
+                            throw new IllegalArgumentException("Vehicle number already exists");
+                        }
+                    }
+
+                    // Update driver details
+                    existingDriver.setFirstName(drivers.getFirstName());
+                    existingDriver.setLastName(drivers.getLastName());
+                    existingDriver.setAddress(drivers.getAddress());
+                    existingDriver.setMobileNumber(drivers.getMobileNumber());
+                    existingDriver.setLicenseNumber(drivers.getLicenseNumber());
+                    existingDriver.setVehicaleName(drivers.getVehicaleName());
+                    existingDriver.setVehicalNumber(drivers.getVehicalNumber());
+
+                    // Set vehicle type, ensuring the vehicle type exists
+                    existingDriver.setVehicleType(
+                            vehicaleTypeRepository.findById(drivers.getVehicleTypeId())
+                                    .orElseThrow(() -> new ResourceNotFound("Vehicle type not found"))
+                    );
+
+                    // Handle image if provided
+                    if (drivers.getImage() != null && !drivers.getImage().isEmpty()) {
+                        try {
+                            // Delete the old image if it exists
+                            if (existingDriver.getImageId() != null) {
+                                imageService.deleteImage(existingDriver.getImageId());
+                            }
+
+                            // Upload the new image
+                            ImagesObj driverImages = imageService.uploadImage(drivers.getImage());
+
+                            // Set the new image URL and ID on the existing driver
+                            existingDriver.setImageUrl(driverImages.getImageUrl());
+                            existingDriver.setImageId(driverImages.getImageId());
+
+                        } catch (IOException e) {
+                            throw new RuntimeException("Error processing image", e);
+                        }
+                    }
+
+                    // Save and return updated driver as DTO
+                    return convertToDriverDto(driverRepository.save(existingDriver));
+
+                }).orElseThrow(() -> new ResourceNotFound("Driver not found with ID: " + driverId));
+    }
+
+
     public DriversDto convertToDriverDto(Drivers drivers) {
         return modelMapper.map(drivers, DriversDto.class);
     }

@@ -11,4 +11,7 @@ public interface IDriverService {
     void deleteDriver(String email, String password);
     List<DriversDto> getByFirstName(String firstName);
     List<DriversDto> getAllDrivers();
+    DriversDto updateDriverAdmin(Long driverId, DriverUpdateRequest driverUpdateRequest);
+    void deleteDriverAdmin(Long driverId);
+    DriversDto getDriver();
 }

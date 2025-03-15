@@ -10,5 +10,6 @@ public interface IPassengerService {
     PassengerDto updatePassenger(PassengerUpdateRequest passengerUpdateRequest);
     List<PassengerDto> getAllPassengers();
     void deletePassenger(String email, String password);
+    PassengerDto getPassenger();
 
 }

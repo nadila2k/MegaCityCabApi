@@ -27,8 +27,8 @@ public class PassengerService implements IPassengerService {
 
     @Override
     public PassengerDto updatePassenger(PassengerUpdateRequest passengerUpdateRequest) {
-        long id = 1;
-        return passengerRepository.findById(id)
+
+        return passengerRepository.findById(getUserId())
                 .map(exisitingPassenger -> {
                     exisitingPassenger.setFirstName(passengerUpdateRequest.getFirstName());
                     exisitingPassenger.setLastName(passengerUpdateRequest.getLastName());
@@ -64,6 +64,12 @@ public class PassengerService implements IPassengerService {
                 }, () -> {
                     throw new ResourceNotFound("Passenger not found");
                 });
+    }
+
+    @Override
+    public PassengerDto getPassenger() {
+        return passengerRepository.findById(getUserId())
+                .map(this::convertToPassengerDto).orElseThrow(() -> new ResourceNotFound("Passenger  not found"));
     }
 
 

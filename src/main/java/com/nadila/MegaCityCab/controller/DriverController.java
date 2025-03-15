@@ -23,7 +23,7 @@ public class DriverController {
     private final IDriverService driverService;
 
     @PostMapping("/update")
-    public ResponseEntity<ApiResponse>  updateDriver(@RequestPart DriverUpdateRequest driverUpdateRequest){
+    public ResponseEntity<ApiResponse>  updateDrive( @ModelAttribute DriverUpdateRequest driverUpdateRequest){
 
         try {
             DriversDto driversDto = driverService.updateDriver(driverUpdateRequest);
@@ -77,6 +77,22 @@ public class DriverController {
         }
 
 
+    }
+
+
+    @GetMapping("/me/driver")  // Endpoint to get the current driver's details
+    public ResponseEntity<ApiResponse> getDriver() {
+        try {
+            DriversDto driverDto = driverService.getDriver();  // Call the service method to get the driver
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(new ApiResponse(ResponseStatus.SUCCESS, "Driver found", driverDto));
+        } catch (ResourceNotFound e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new ApiResponse(ResponseStatus.FAILURE, "Driver not found", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(ResponseStatus.ERROR, "Internal server error", e.getMessage()));
+        }
     }
 
 
