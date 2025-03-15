@@ -136,14 +136,9 @@ public class DriverService implements IDriverService {
 
     @Override
     public void deleteDriverAdmin(Long driverId) {
-        cabUserRepository.deleteById(getAuthId.getCurrentUserId());
-        // Find driver by ID
-        Drivers driver = driverRepository.findById(driverId)
-                .orElseThrow(() -> new ResourceNotFound("Driver not found with ID: " + driverId));
+        driverRepository.findById(driverId)
+                .ifPresent(driver -> {cabUserRepository.deleteById(driver.getCabUser().getId());});
 
-
-        // Delete driver from database
-        driverRepository.delete(driver);
     }
 
     @Override
